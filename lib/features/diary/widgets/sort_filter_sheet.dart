@@ -1,0 +1,215 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../providers/diary_providers.dart';
+import '../../../providers/settings_providers.dart';
+import '../../../theme/colors.dart';
+import '../../../theme/typography.dart';
+import '../../../widgets/pill.dart';
+
+Future<void> showSortFilterSheet(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColors.cream,
+    barrierColor: Colors.black.withValues(alpha: 0.3),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+    ),
+    builder: (_) => const _SortFilterSheet(),
+  );
+}
+
+class _SortFilterSheet extends ConsumerWidget {
+  const _SortFilterSheet();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final accent = ref.watch(accentColorProvider);
+    final sortKey = ref.watch(diarySortProvider);
+    final filter = ref.watch(diaryFilterProvider);
+    final tags = ref.watch(allTagsProvider);
+    final entries = ref.watch(diaryEntriesProvider).valueOrNull ?? const [];
+    final meals = entries
+        .map((e) => e.meal)
+        .where((m) => m.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    final groups = <String, List<SortOption>>{};
+    for (final o in kSortOptions) {
+      groups.putIfAbsent(o.group, () => []).add(o);
+    }
+
+    return SafeArea(
+      top: false,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.8,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 12),
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sort & Filter',
+                      style: AppTextStyles.screenTitle(size: 18),
+                    ),
+                    const SizedBox(height: 20),
+                    for (final group in groups.entries) ...[
+                      _Section(
+                        label: group.key,
+                        child: Wrap(
+                          spacing: 7,
+                          runSpacing: 7,
+                          children: [
+                            for (final o in group.value)
+                              Pill(
+                                label: o.label,
+                                active: sortKey == o.key,
+                                accent: accent,
+                                onTap: () => ref
+                                    .read(diarySortProvider.notifier)
+                                    .set(o.key),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (meals.isNotEmpty) ...[
+                      const Divider(color: AppColors.border, height: 1),
+                      const SizedBox(height: 16),
+                      _Section(
+                        label: 'Meal type',
+                        child: Wrap(
+                          spacing: 7,
+                          runSpacing: 7,
+                          children: [
+                            Pill(
+                              label: 'All',
+                              active: filter.meal.isEmpty,
+                              accent: accent,
+                              onTap: () => ref
+                                  .read(diaryFilterProvider.notifier)
+                                  .setMeal(''),
+                            ),
+                            for (final m in meals)
+                              Pill(
+                                label: m,
+                                active: filter.meal == m,
+                                accent: accent,
+                                onTap: () => ref
+                                    .read(diaryFilterProvider.notifier)
+                                    .setMeal(filter.meal == m ? '' : m),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (tags.isNotEmpty)
+                      _Section(
+                        label: 'Tags',
+                        child: Wrap(
+                          spacing: 7,
+                          runSpacing: 7,
+                          children: [
+                            for (final t in tags)
+                              Pill(
+                                label: t,
+                                active: filter.tags.contains(t),
+                                accent: accent,
+                                onTap: () => ref
+                                    .read(diaryFilterProvider.notifier)
+                                    .toggleTag(t),
+                              ),
+                          ],
+                        ),
+                      ),
+                    if (filter.isActive) ...[
+                      const SizedBox(height: 16),
+                      const Divider(color: AppColors.border, height: 1),
+                      const SizedBox(height: 16),
+                      _ClearFiltersButton(
+                        onTap: () =>
+                            ref.read(diaryFilterProvider.notifier).clear(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  const _Section({required this.label, required this.child});
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label.toUpperCase(), style: AppTextStyles.sectionLabel()),
+        const SizedBox(height: 8),
+        child,
+      ],
+    );
+  }
+}
+
+class _ClearFiltersButton extends StatelessWidget {
+  const _ClearFiltersButton({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.border, width: 1.5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            'Clear filters',
+            style: AppTextStyles.body(size: 14, color: AppColors.muted),
+          ),
+        ),
+      ),
+    );
+  }
+}
