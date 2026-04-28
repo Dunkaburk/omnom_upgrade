@@ -40,7 +40,7 @@ final peopleProvider =
 // ignore: unused_element
 typedef PeopleRef = AutoDisposeProviderRef<({String person1, String person2})>;
 String _$settingsControllerHash() =>
-    r'0ca3bd6eb7e6deaecfef17c2de599c83b8a2a812';
+    r'df00466f8cd918afa1db46b81efffc360aa57838';
 
 /// See also [SettingsController].
 @ProviderFor(SettingsController)

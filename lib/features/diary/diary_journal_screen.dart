@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/diary_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
+import 'diary_detail_screen.dart';
+import 'diary_form_screen.dart';
 import 'widgets/diary_card.dart';
 import 'widgets/diary_empty_state.dart';
 import 'widgets/diary_header.dart';
@@ -33,7 +35,7 @@ class DiaryJournalScreen extends ConsumerWidget {
               children: [
                 DiaryHeader(
                   entryCount: totalCount,
-                  onNew: () => _openNewEntryPlaceholder(context),
+                  onNew: () => _openNewEntry(context),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
@@ -74,7 +76,7 @@ class DiaryJournalScreen extends ConsumerWidget {
                     final entry = sorted[i];
                     return DiaryCard(
                       entry: entry,
-                      onTap: () => _openDetailPlaceholder(context, entry.title),
+                      onTap: () => _openDetail(context, entry.id),
                     );
                   },
                 );
@@ -86,47 +88,19 @@ class DiaryJournalScreen extends ConsumerWidget {
     );
   }
 
-  void _openNewEntryPlaceholder(BuildContext context) {
+  void _openNewEntry(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         fullscreenDialog: true,
-        builder: (_) => const _Placeholder(title: 'New entry'),
+        builder: (_) => const DiaryFormScreen(),
       ),
     );
   }
 
-  void _openDetailPlaceholder(BuildContext context, String title) {
+  void _openDetail(BuildContext context, String entryId) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => _Placeholder(title: title),
-      ),
-    );
-  }
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.title});
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      appBar: AppBar(
-        backgroundColor: AppColors.cream,
-        foregroundColor: AppColors.ink,
-        elevation: 0,
-        title: Text(title, style: AppTextStyles.screenTitle(size: 18)),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(
-            'Coming in the next phase.',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.body(color: AppColors.muted),
-          ),
-        ),
+        builder: (_) => DiaryDetailScreen(entryId: entryId),
       ),
     );
   }
