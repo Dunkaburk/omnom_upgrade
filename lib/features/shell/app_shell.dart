@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../providers/app_tab_provider.dart';
 import '../diary/diary_journal_screen.dart';
 import '../other/other_placeholder.dart';
-import '../recipes/recipes_placeholder.dart';
+import '../recipes/recipes_list_screen.dart';
 import 'bottom_tab_bar.dart';
 
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerWidget {
   const AppShell({super.key});
 
   @override
-  State<AppShell> createState() => _AppShellState();
-}
-
-class _AppShellState extends State<AppShell> {
-  AppTab _tab = AppTab.diary;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tab = ref.watch(appTabStateProvider);
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -24,17 +20,18 @@ class _AppShellState extends State<AppShell> {
           children: [
             Expanded(
               child: IndexedStack(
-                index: _tab.index,
+                index: tab.index,
                 children: const [
                   DiaryJournalScreen(),
-                  RecipesPlaceholder(),
+                  RecipesListScreen(),
                   OtherPlaceholder(),
                 ],
               ),
             ),
             BottomTabBar(
-              current: _tab,
-              onChanged: (t) => setState(() => _tab = t),
+              current: tab,
+              onChanged: (t) =>
+                  ref.read(appTabStateProvider.notifier).set(t),
             ),
           ],
         ),
