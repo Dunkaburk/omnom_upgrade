@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/app_tab_provider.dart';
 import '../diary/diary_journal_screen.dart';
-import '../other/other_placeholder.dart';
+import '../other/discover_screen.dart';
 import '../recipes/recipes_list_screen.dart';
 import 'bottom_tab_bar.dart';
 
@@ -24,7 +24,7 @@ class AppShell extends ConsumerWidget {
                 children: const [
                   DiaryJournalScreen(),
                   RecipesListScreen(),
-                  OtherPlaceholder(),
+                  DiscoverScreen(),
                 ],
               ),
             ),
