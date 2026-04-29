@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/diary_entry.dart';
 import '../../models/recipe.dart';
+import '../../providers/app_tab_provider.dart';
 import '../../providers/diary_providers.dart';
 import '../../providers/recipe_providers.dart';
 import '../../providers/settings_providers.dart';
@@ -13,6 +14,8 @@ import '../../theme/colors.dart';
 import '../../theme/typography.dart';
 import '../../utils/formatters.dart';
 import '../../widgets/section_label.dart';
+import '../recipes/recipe_detail_screen.dart';
+import '../shell/bottom_tab_bar.dart';
 import 'diary_form_screen.dart';
 import 'widgets/omnom_back_button.dart';
 
@@ -49,6 +52,18 @@ class DiaryDetailScreen extends ConsumerWidget {
 
     final avg = avgRating(entry.r1, entry.r2);
 
+    void openLinkedRecipe() {
+      if (linked == null) return;
+      final navigator = Navigator.of(context);
+      navigator.pop();
+      ref.read(appTabStateProvider.notifier).set(AppTab.recipes);
+      navigator.push(
+        MaterialPageRoute<void>(
+          builder: (_) => RecipeDetailScreen(recipeId: linked.id),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.cream,
       body: SafeArea(
@@ -76,6 +91,7 @@ class DiaryDetailScreen extends ConsumerWidget {
                     accent: accent,
                     people: people,
                     linked: linked,
+                    onTapLinked: openLinkedRecipe,
                   ),
                 ),
               ),
@@ -91,6 +107,7 @@ class DiaryDetailScreen extends ConsumerWidget {
     required Color accent,
     required ({String person1, String person2}) people,
     required Recipe? linked,
+    required VoidCallback onTapLinked,
   }) {
     final sections = <Widget>[];
 
@@ -138,7 +155,9 @@ class DiaryDetailScreen extends ConsumerWidget {
 
     if (entry.linkedRecipeId != null) {
       addSpacing();
-      sections.add(_LinkedRecipeSection(linked: linked));
+      sections.add(
+        _LinkedRecipeSection(linked: linked, onTap: onTapLinked),
+      );
     }
 
     if (entry.r1 != null || entry.r2 != null) {
@@ -445,9 +464,10 @@ class _TagsSection extends StatelessWidget {
 }
 
 class _LinkedRecipeSection extends StatelessWidget {
-  const _LinkedRecipeSection({required this.linked});
+  const _LinkedRecipeSection({required this.linked, required this.onTap});
 
   final Recipe? linked;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -458,52 +478,63 @@ class _LinkedRecipeSection extends StatelessWidget {
         '${linked!.ingredients.length} ingredients',
     ];
     final subtitle = subtitleParts.join(' · ');
+    final tappable = linked != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SectionLabel('Linked recipe'),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: AppColors.white,
+        Material(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(14),
+          child: InkWell(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.border, width: 1.5),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: AppColors.creamDark,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                alignment: Alignment.center,
-                child: const Text('📋', style: TextStyle(fontSize: 20)),
+            onTap: tappable ? onTap : null,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.border, width: 1.5),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTextStyles.cardTitle(),
-                      overflow: TextOverflow.ellipsis,
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.creamDark,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    if (subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text(subtitle, style: AppTextStyles.small(size: 11)),
-                    ],
-                  ],
-                ),
+                    alignment: Alignment.center,
+                    child: const Text('📋', style: TextStyle(fontSize: 20)),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: AppTextStyles.cardTitle(),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (subtitle.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(subtitle, style: AppTextStyles.small(size: 11)),
+                        ],
+                      ],
+                    ),
+                  ),
+                  if (tappable)
+                    const Text(
+                      '›',
+                      style:
+                          TextStyle(fontSize: 18, color: AppColors.muted),
+                    ),
+                ],
               ),
-              const Text(
-                '›',
-                style: TextStyle(fontSize: 18, color: AppColors.muted),
-              ),
-            ],
+            ),
           ),
         ),
       ],

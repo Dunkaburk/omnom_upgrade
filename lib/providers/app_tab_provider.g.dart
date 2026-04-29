@@ -1,24 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'recipe_providers.dart';
+part of 'app_tab_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$recipesHash() => r'6705635f2aadbcf65fb38d44050a61e069992873';
+String _$appTabStateHash() => r'546918b587510061206250508e9326493bde8688';
 
-/// See also [Recipes].
-@ProviderFor(Recipes)
-final recipesProvider = AsyncNotifierProvider<Recipes, List<Recipe>>.internal(
-  Recipes.new,
-  name: r'recipesProvider',
+/// See also [AppTabState].
+@ProviderFor(AppTabState)
+final appTabStateProvider = NotifierProvider<AppTabState, AppTab>.internal(
+  AppTabState.new,
+  name: r'appTabStateProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$recipesHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appTabStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$Recipes = AsyncNotifier<List<Recipe>>;
+typedef _$AppTabState = Notifier<AppTab>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
