@@ -5,9 +5,11 @@ import '../../providers/recipe_providers.dart';
 import '../../providers/settings_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
+import '../../widgets/sort_filter_button.dart';
 import 'recipe_add_chooser_screen.dart';
 import 'recipe_detail_screen.dart';
 import 'widgets/recipe_card.dart';
+import 'widgets/recipe_sort_filter_sheet.dart';
 
 class RecipesListScreen extends ConsumerWidget {
   const RecipesListScreen({super.key});
@@ -15,7 +17,11 @@ class RecipesListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipesAsync = ref.watch(recipesProvider);
+    final sorted = ref.watch(sortedRecipesProvider);
+    final filter = ref.watch(recipeFilterProvider);
+    final sortKey = ref.watch(recipeSortProvider);
     final accent = ref.watch(accentColorProvider);
+    final totalCount = recipesAsync.valueOrNull?.length ?? 0;
 
     return ColoredBox(
       color: AppColors.cream,
@@ -25,38 +31,51 @@ class RecipesListScreen extends ConsumerWidget {
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: AppColors.border)),
             ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Recipes',
-                          style: AppTextStyles.screenTitle(size: 22)
-                              .copyWith(height: 1.1),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Recipes',
+                              style: AppTextStyles.screenTitle(size: 22)
+                                  .copyWith(height: 1.1),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '$totalCount saved',
+                              style: AppTextStyles.body(
+                                size: 12,
+                                color: AppColors.muted,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${recipesAsync.valueOrNull?.length ?? 0} saved',
-                          style: AppTextStyles.body(
-                            size: 12,
-                            color: AppColors.muted,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      _AddButton(
+                        accent: accent,
+                        onTap: () => _openChooser(context),
+                      ),
+                    ],
                   ),
-                  _AddButton(
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+                  child: OmnomSortFilterButton(
+                    sortLabel: recipeSortByKey(sortKey).label,
+                    filterCount: filter.count,
                     accent: accent,
-                    onTap: () => _openChooser(context),
+                    onTap: () => showRecipeSortFilterSheet(context),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -74,19 +93,19 @@ class RecipesListScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              data: (recipes) {
-                if (recipes.isEmpty) {
-                  return const _EmptyState();
+              data: (_) {
+                if (sorted.isEmpty) {
+                  return _EmptyState(filtersActive: filter.isActive);
                 }
                 return ListView.separated(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 14,
                   ),
-                  itemCount: recipes.length,
+                  itemCount: sorted.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, i) {
-                    final r = recipes[i];
+                    final r = sorted[i];
                     return RecipeCard(
                       recipe: r,
                       onTap: () => _openDetail(context, r.id),
@@ -176,10 +195,16 @@ class _AddButton extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+  const _EmptyState({this.filtersActive = false});
+
+  final bool filtersActive;
 
   @override
   Widget build(BuildContext context) {
+    final title = filtersActive ? 'No recipes match' : 'No recipes yet';
+    final body = filtersActive
+        ? 'Try clearing some filters to see more.'
+        : 'Tap + Add to save your first recipe.';
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -188,13 +213,10 @@ class _EmptyState extends StatelessWidget {
           children: [
             const Text('📋', style: TextStyle(fontSize: 36)),
             const SizedBox(height: 12),
-            Text(
-              'No recipes yet',
-              style: AppTextStyles.screenTitle(size: 16),
-            ),
+            Text(title, style: AppTextStyles.screenTitle(size: 16)),
             const SizedBox(height: 6),
             Text(
-              'Tap + Add to save your first recipe.',
+              body,
               textAlign: TextAlign.center,
               style: AppTextStyles.body(size: 13, color: AppColors.muted)
                   .copyWith(height: 1.6),

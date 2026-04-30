@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/diary_providers.dart';
+import '../../providers/settings_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
+import '../../widgets/sort_filter_button.dart';
 import 'diary_detail_screen.dart';
 import 'diary_form_screen.dart';
 import 'widgets/diary_card.dart';
 import 'widgets/diary_empty_state.dart';
 import 'widgets/diary_header.dart';
-import 'widgets/sort_filter_button.dart';
 import 'widgets/sort_filter_sheet.dart';
 
 class DiaryJournalScreen extends ConsumerWidget {
@@ -19,7 +20,9 @@ class DiaryJournalScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final entriesAsync = ref.watch(diaryEntriesProvider);
     final filter = ref.watch(diaryFilterProvider);
+    final sortKey = ref.watch(diarySortProvider);
     final sorted = ref.watch(sortedDiaryEntriesProvider);
+    final accent = ref.watch(accentColorProvider);
     final totalCount = entriesAsync.valueOrNull?.length ?? 0;
 
     return ColoredBox(
@@ -39,7 +42,10 @@ class DiaryJournalScreen extends ConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
-                  child: SortFilterButton(
+                  child: OmnomSortFilterButton(
+                    sortLabel: sortByKey(sortKey).label,
+                    filterCount: filter.count,
+                    accent: accent,
                     onTap: () => showSortFilterSheet(context),
                   ),
                 ),
