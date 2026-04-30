@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/diary_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
+import '../../widgets/list_card_actions.dart';
 import 'diary_detail_screen.dart';
 import 'diary_form_screen.dart';
 import 'widgets/diary_card.dart';
@@ -74,9 +75,18 @@ class DiaryJournalScreen extends ConsumerWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, i) {
                     final entry = sorted[i];
-                    return DiaryCard(
-                      entry: entry,
-                      onTap: () => _openDetail(context, entry.id),
+                    return ListCardActions(
+                      key: ValueKey('diary-${entry.id}'),
+                      itemKey: ValueKey('diary-dismiss-${entry.id}'),
+                      title: entry.title.isEmpty ? 'Untitled' : entry.title,
+                      kind: 'entry',
+                      onDelete: () => ref
+                          .read(diaryEntriesProvider.notifier)
+                          .remove(entry.id),
+                      child: DiaryCard(
+                        entry: entry,
+                        onTap: () => _openDetail(context, entry.id),
+                      ),
                     );
                   },
                 );

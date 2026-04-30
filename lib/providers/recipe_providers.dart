@@ -32,4 +32,17 @@ class Recipes extends _$Recipes {
     state = AsyncData(next);
     await ref.read(recipeRepositoryProvider).save(next);
   }
+
+  Future<void> move(int oldIndex, int newIndex) async {
+    final current = [...?state.valueOrNull];
+    if (oldIndex < 0 || oldIndex >= current.length) return;
+    var target = newIndex;
+    if (target > oldIndex) target -= 1;
+    if (target < 0) target = 0;
+    if (target > current.length) target = current.length;
+    final recipe = current.removeAt(oldIndex);
+    current.insert(target, recipe);
+    state = AsyncData(current);
+    await ref.read(recipeRepositoryProvider).save(current);
+  }
 }

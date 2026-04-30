@@ -75,6 +75,19 @@ class DiaryEntries extends _$DiaryEntries {
     state = AsyncData(next);
     await ref.read(diaryRepositoryProvider).save(next);
   }
+
+  Future<void> move(int oldIndex, int newIndex) async {
+    final current = [...?state.valueOrNull];
+    if (oldIndex < 0 || oldIndex >= current.length) return;
+    var target = newIndex;
+    if (target > oldIndex) target -= 1;
+    if (target < 0) target = 0;
+    if (target > current.length) target = current.length;
+    final entry = current.removeAt(oldIndex);
+    current.insert(target, entry);
+    state = AsyncData(current);
+    await ref.read(diaryRepositoryProvider).save(current);
+  }
 }
 
 @riverpod

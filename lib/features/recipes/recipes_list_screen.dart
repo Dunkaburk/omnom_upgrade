@@ -5,6 +5,7 @@ import '../../providers/recipe_providers.dart';
 import '../../providers/settings_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
+import '../../widgets/list_card_actions.dart';
 import 'recipe_add_chooser_screen.dart';
 import 'recipe_detail_screen.dart';
 import 'widgets/recipe_card.dart';
@@ -78,18 +79,43 @@ class RecipesListScreen extends ConsumerWidget {
                 if (recipes.isEmpty) {
                   return const _EmptyState();
                 }
-                return ListView.separated(
+                return ReorderableListView.builder(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 14,
                   ),
                   itemCount: recipes.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  buildDefaultDragHandles: false,
+                  proxyDecorator: (child, _, __) => Material(
+                    elevation: 6,
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    child: child,
+                  ),
+                  onReorder: (oldIndex, newIndex) => ref
+                      .read(recipesProvider.notifier)
+                      .move(oldIndex, newIndex),
                   itemBuilder: (context, i) {
                     final r = recipes[i];
-                    return RecipeCard(
-                      recipe: r,
-                      onTap: () => _openDetail(context, r.id),
+                    return Padding(
+                      key: ValueKey('recipe-${r.id}'),
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: ListCardActions(
+                        key: ValueKey('recipe-actions-${r.id}'),
+                        itemKey: ValueKey('recipe-dismiss-${r.id}'),
+                        title: r.title.isEmpty ? 'Untitled' : r.title,
+                        kind: 'recipe',
+                        onDelete: () => ref
+                            .read(recipesProvider.notifier)
+                            .remove(r.id),
+                        child: ReorderableDelayedDragStartListener(
+                          index: i,
+                          child: RecipeCard(
+                            recipe: r,
+                            onTap: () => _openDetail(context, r.id),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 );
