@@ -195,10 +195,10 @@ class _DiaryFormScreenState extends ConsumerState<DiaryFormScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SectionLabel('Description'),
+          const SectionLabel('Beskrivning'),
           OmnomTextField(
             controller: _desc,
-            placeholder: 'How did it turn out? Any notes…',
+            placeholder: 'Hur gick det? Några anteckningar…',
             minLines: 3,
             maxLines: 6,
           ),
@@ -214,10 +214,10 @@ class _DiaryFormScreenState extends ConsumerState<DiaryFormScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SectionLabel('Country of origin', optional: true),
+          const SectionLabel('Ursprungsland', optional: true),
           OmnomTextField(
             controller: _country,
-            placeholder: 'e.g. Italy, Japan, Morocco…',
+            placeholder: 't.ex. Italien, Japan, Marocko…',
           ),
         ],
       ),
@@ -225,14 +225,14 @@ class _DiaryFormScreenState extends ConsumerState<DiaryFormScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SectionLabel('Tags'),
+          const SectionLabel('Taggar'),
           TagInput(
             tags: _tags,
             onChange: (next) => setState(() => _tags = next),
           ),
           const SizedBox(height: 5),
           Text(
-            'Press Enter or comma to add',
+            'Tryck Enter eller komma för att lägga till',
             style: AppTextStyles.small(size: 11),
           ),
         ],
@@ -264,7 +264,7 @@ class _DiaryFormScreenState extends ConsumerState<DiaryFormScreen> {
       _SaveButton(
         enabled: _canSave,
         accent: accent,
-        label: _isEditing ? 'Save changes' : 'Save entry',
+        label: _isEditing ? 'Spara ändringar' : 'Spara inlägg',
         onPressed: _save,
       ),
     ];
@@ -301,15 +301,15 @@ class _Header extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isEditing ? 'Edit entry' : 'New entry',
+                    isEditing ? 'Redigera inlägg' : 'Nytt inlägg',
                     style: AppTextStyles.screenTitle(size: 20)
                         .copyWith(height: 1.1),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     isEditing
-                        ? 'Update your notes and ratings'
-                        : 'What did you make today?',
+                        ? 'Uppdatera dina anteckningar och recensioner'
+                        : 'Vad lagade du idag?',
                     style: AppTextStyles.small(size: 11),
                   ),
                 ],
@@ -359,7 +359,7 @@ class _PhotoTitleRow extends StatelessWidget {
             children: [
               OmnomTextField(
                 controller: titleController,
-                placeholder: 'What did you make?',
+                placeholder: 'Vad lagade du?',
               ),
               const SizedBox(height: 8),
               _DateField(date: date, onTap: onPickDate),
@@ -429,7 +429,7 @@ class _MealSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Meal type'),
+        const SectionLabel('Måltidstyp'),
         Wrap(
           spacing: 7,
           runSpacing: 7,
@@ -470,7 +470,7 @@ class _RatingsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Ratings'),
+        const SectionLabel('Betyg'),
         _RatingCard(
           name: people.person1,
           value: r1,
@@ -639,7 +639,7 @@ class _LinkedRecipeSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Linked recipe', optional: true),
+        const SectionLabel('Länkat recept', optional: true),
         if (hasLink)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -665,7 +665,7 @@ class _LinkedRecipeSection extends StatelessWidget {
                   child: GestureDetector(
                     onTap: onTap,
                     child: Text(
-                      'Tap to change recipe',
+                      'Tryck för att ändra recept',
                       style: AppTextStyles.body(
                         size: 14,
                         color: AppColors.ink,
@@ -718,7 +718,7 @@ class _LinkedRecipeSection extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Link a recipe…',
+                          'Länka ett recept…',
                           style: AppTextStyles.body(
                             size: 14,
                             color: AppColors.muted,

@@ -208,10 +208,10 @@ class _RecipeFormScreenState extends ConsumerState<RecipeFormScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SectionLabel('Description', optional: true),
+          const SectionLabel('Beskrivning', optional: true),
           OmnomTextField(
             controller: _description,
-            placeholder: 'What makes this special?',
+            placeholder: 'Vad gör det speciellt?',
             minLines: 2,
             maxLines: 6,
           ),
@@ -227,14 +227,14 @@ class _RecipeFormScreenState extends ConsumerState<RecipeFormScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SectionLabel('Tags'),
+          const SectionLabel('Taggar'),
           TagInput(
             tags: _tags,
             onChange: (next) => setState(() => _tags = next),
           ),
           const SizedBox(height: 5),
           Text(
-            'Press Enter or comma to add',
+            'Tryck Enter eller komma för att lägga till',
             style: AppTextStyles.small(size: 11),
           ),
         ],
@@ -255,7 +255,7 @@ class _RecipeFormScreenState extends ConsumerState<RecipeFormScreen> {
       _SaveButton(
         enabled: _canSave,
         accent: accent,
-        label: _isEditing ? 'Save changes' : 'Save recipe',
+        label: _isEditing ? 'Spara ändringar' : 'Spara recept',
         onPressed: _save,
       ),
     ];
@@ -290,13 +290,13 @@ class _Header extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isEditing ? 'Edit recipe' : 'Add recipe',
+                    isEditing ? 'Redigera recept' : 'Lägg till recept',
                     style: AppTextStyles.screenTitle(size: 20)
                         .copyWith(height: 1.1),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Enter the details below',
+                    'Ange detaljerna nedan',
                     style: AppTextStyles.small(size: 11),
                   ),
                 ],
@@ -340,7 +340,7 @@ class _PhotoTitleRow extends StatelessWidget {
             children: [
               OmnomTextField(
                 controller: titleController,
-                placeholder: 'Recipe name',
+                placeholder: 'Receptnamn',
               ),
               const SizedBox(height: 8),
               Row(
@@ -349,7 +349,7 @@ class _PhotoTitleRow extends StatelessWidget {
                   Expanded(
                     child: OmnomTextField(
                       controller: countryController,
-                      placeholder: 'Country of origin',
+                      placeholder: 'Ursprungsland',
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -362,7 +362,7 @@ class _PhotoTitleRow extends StatelessWidget {
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                       ],
-                      suffix: 'srv',
+                      suffix: 'port.',
                     ),
                   ),
                 ],
@@ -396,8 +396,8 @@ class _IngredientsSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('INGREDIENTS', style: AppTextStyles.sectionLabel()),
-              _SmallAddButton(label: '+ Add', onTap: onAdd),
+              Text('INGREDIENSER', style: AppTextStyles.sectionLabel()),
+              _SmallAddButton(label: '+ Lägg till', onTap: onAdd),
             ],
           ),
         ),
@@ -408,7 +408,7 @@ class _IngredientsSection extends StatelessWidget {
               SizedBox(
                 width: 52,
                 child: Text(
-                  'Qty',
+                  'Antal',
                   style: AppTextStyles.body(
                     size: 10,
                     color: AppColors.muted,
@@ -420,7 +420,7 @@ class _IngredientsSection extends StatelessWidget {
               SizedBox(
                 width: 60,
                 child: Text(
-                  'Unit',
+                  'Enhet',
                   style: AppTextStyles.body(
                     size: 10,
                     color: AppColors.muted,
@@ -431,7 +431,7 @@ class _IngredientsSection extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Ingredient',
+                  'Ingrediens',
                   style: AppTextStyles.body(
                     size: 10,
                     color: AppColors.muted,
@@ -490,7 +490,7 @@ class _IngredientRow extends StatelessWidget {
         Expanded(
           child: OmnomTextField(
             controller: draft.name,
-            placeholder: 'Ingredient',
+            placeholder: 'Ingrediens',
           ),
         ),
         SizedBox(
@@ -526,8 +526,8 @@ class _StepsSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('INSTRUCTIONS', style: AppTextStyles.sectionLabel()),
-              _SmallAddButton(label: '+ Step', onTap: onAdd),
+              Text('INSTRUKTIONER', style: AppTextStyles.sectionLabel()),
+              _SmallAddButton(label: '+ Steg', onTap: onAdd),
             ],
           ),
         ),
@@ -588,7 +588,7 @@ class _StepRow extends StatelessWidget {
         Expanded(
           child: OmnomTextField(
             controller: draft.text,
-            placeholder: 'Step ${index + 1}…',
+            placeholder: 'Steg ${index + 1}…',
             minLines: 2,
             maxLines: 6,
           ),

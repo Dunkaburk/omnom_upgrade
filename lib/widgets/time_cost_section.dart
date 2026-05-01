@@ -25,20 +25,20 @@ class TimeCostSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Time & cost', optional: true),
+        const SectionLabel('Tid & kostnad', optional: true),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: _MinuteField(
-                label: 'Active time',
+                label: 'Aktiv tid',
                 controller: activeController,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _MinuteField(
-                label: 'Passive time',
+                label: 'Passiv tid',
                 controller: passiveController,
               ),
             ),
@@ -51,7 +51,7 @@ class TimeCostSection extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: Text(
-                'Estimated cost',
+                'Uppskattad kostnad',
                 style: AppTextStyles.body(size: 12, color: AppColors.muted),
               ),
             ),
@@ -60,7 +60,7 @@ class TimeCostSection extends StatelessWidget {
               placeholder: '0.00',
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              prefix: '£',
+              prefix: 'kr',
             ),
           ],
         ),

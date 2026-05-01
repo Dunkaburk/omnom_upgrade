@@ -55,13 +55,13 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Recipes',
+                              'Recept',
                               style: AppTextStyles.screenTitle(size: 22)
                                   .copyWith(height: 1.1),
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '$totalCount saved',
+                              '$totalCount sparade',
                               style: AppTextStyles.body(
                                 size: 12,
                                 color: AppColors.muted,
@@ -107,7 +107,7 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    'Failed to load recipes: $e',
+                    'Kunde inte ladda recept: $e',
                     textAlign: TextAlign.center,
                     style: AppTextStyles.body(color: AppColors.muted),
                   ),
@@ -141,8 +141,8 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
                         padding: const EdgeInsets.only(bottom: 10),
                         child: ListCardActions(
                           itemKey: ValueKey('recipe-dismiss-${r.id}'),
-                          title: r.title.isEmpty ? 'Untitled' : r.title,
-                          kind: 'recipe',
+                          title: r.title.isEmpty ? 'Namnlöst' : r.title,
+                          kind: 'receptet',
                           enableLongPress: false,
                           onDelete: () => ref
                               .read(recipesProvider.notifier)
@@ -178,7 +178,7 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
                           Expanded(child: card),
                           const SizedBox(width: 10),
                           TrashButton(
-                            itemTitle: r.title.isEmpty ? 'this recipe' : r.title,
+                            itemTitle: r.title.isEmpty ? 'det här receptet' : r.title,
                             onTap: () => _confirmAndDelete(
                               context,
                               ref,
@@ -192,8 +192,8 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
                     return ListCardActions(
                       key: ValueKey('recipe-${r.id}'),
                       itemKey: ValueKey('recipe-dismiss-${r.id}'),
-                      title: r.title.isEmpty ? 'Untitled' : r.title,
-                      kind: 'recipe',
+                      title: r.title.isEmpty ? 'Namnlöst' : r.title,
+                      kind: 'receptet',
                       onDelete: () =>
                           ref.read(recipesProvider.notifier).remove(r.id),
                       child: card,
@@ -216,8 +216,8 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
   ) async {
     final ok = await confirmDelete(
       context,
-      title: title.isEmpty ? 'Untitled' : title,
-      kind: 'recipe',
+      title: title.isEmpty ? 'Namnlöst' : title,
+      kind: 'receptet',
     );
     if (ok) {
       await ref.read(recipesProvider.notifier).remove(id);
@@ -286,7 +286,7 @@ class _AddButton extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Add',
+                  'Lägg till',
                   style: AppTextStyles.body(
                     size: 13,
                     color: AppColors.white,
@@ -309,10 +309,10 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = filtersActive ? 'No recipes match' : 'No recipes yet';
+    final title = filtersActive ? 'Inga recept matchar' : 'Inga recept ännu';
     final body = filtersActive
-        ? 'Try clearing some filters to see more.'
-        : 'Tap + Add to save your first recipe.';
+        ? 'Prova att rensa filter för att se fler.'
+        : 'Tryck + Lägg till för att spara ditt första recept.';
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),

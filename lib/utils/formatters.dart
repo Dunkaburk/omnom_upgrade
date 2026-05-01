@@ -1,12 +1,12 @@
 import 'package:intl/intl.dart';
 
-/// Formats a price in GBP. Returns `null` so callers can branch on absence.
+/// Formats a price in sek. Returns `null` so callers can branch on absence.
 String? fmtPrice(double? price) {
   if (price == null) return null;
   if (price == price.roundToDouble()) {
-    return '£${price.toStringAsFixed(0)}';
+    return '${price.toStringAsFixed(0)}kr';
   }
-  return '£${price.toStringAsFixed(2)}';
+  return '${price.toStringAsFixed(2)}kr';
 }
 
 /// Formats minutes as e.g. "10m", "1h", "1h 20m". Returns null when both
@@ -27,7 +27,7 @@ String? fmtTime(int? activeMinutes, int? passiveMinutes) {
 String fmtDate(String iso) {
   try {
     final dt = DateTime.parse(iso);
-    return DateFormat('d MMM yyyy').format(dt);
+    return DateFormat('d MMM yyyy', 'sv').format(dt);
   } catch (_) {
     return iso;
   }

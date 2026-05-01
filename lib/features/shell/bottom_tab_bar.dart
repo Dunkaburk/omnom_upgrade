@@ -62,9 +62,9 @@ class _TabButton extends StatelessWidget {
   final VoidCallback onTap;
 
   String get _label => switch (tab) {
-        AppTab.diary => 'Diary',
-        AppTab.recipes => 'Recipes',
-        AppTab.other => 'Other',
+        AppTab.diary => 'Logg',
+        AppTab.recipes => 'Recept',
+        AppTab.other => 'Övrigt',
       };
 
   Widget _buildIcon(Color color) => switch (tab) {

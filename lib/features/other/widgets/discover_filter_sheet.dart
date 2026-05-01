@@ -62,26 +62,26 @@ class _DiscoverFilterSheet extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 18, top: 4),
                         child: Text(
-                          'Filters',
+                          'Filter',
                           style: AppTextStyles.screenTitle(size: 18),
                         ),
                       ),
                       OmnomToggle(
-                        label: 'Undiscovered only',
-                        sub: 'Exclude countries already in your diary',
+                        label: 'Oupptäckt',
+                        sub: 'Uteslut länder som redan finns i din logg',
                         value: filter.undiscoveredOnly,
                         accent: accent,
                         onChanged: controller.setUndiscoveredOnly,
                       ),
                       OmnomToggle(
-                        label: 'Exclude recent picks',
-                        sub: 'Skip countries from this session',
+                        label: 'Uteslut senaste val',
+                        sub: 'Hoppa över länder från den här sessionen',
                         value: filter.excludeRecent,
                         accent: accent,
                         onChanged: controller.setExcludeRecent,
                       ),
                       const SizedBox(height: 18),
-                      const SectionLabel('Continent'),
+                      const SectionLabel('Kontinent'),
                       Wrap(
                         spacing: 7,
                         runSpacing: 7,
@@ -134,7 +134,7 @@ class _ClearFiltersButton extends StatelessWidget {
               border: Border.all(color: AppColors.border, width: 1.5),
             ),
             child: Text(
-              'Clear all filters',
+              'Rensa alla filter',
               style: AppTextStyles.body(
                 size: 14,
                 color: AppColors.muted,

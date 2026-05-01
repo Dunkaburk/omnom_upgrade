@@ -230,7 +230,7 @@ class _MetadataPills extends StatelessWidget {
       children.add(_NeutralPill(label: '🌍 ${recipe.country}'));
     }
     if (recipe.servings.isNotEmpty) {
-      children.add(_NeutralPill(label: '${recipe.servings} servings'));
+      children.add(_NeutralPill(label: '${recipe.servings} port.'));
     }
     final price = fmtPrice(recipe.price);
     if (price != null) {
@@ -249,7 +249,7 @@ class _MetadataPills extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            '🔗 Imported',
+            '🔗 Importerad',
             style: AppTextStyles.body(
               size: 12,
               color: accent,
@@ -293,7 +293,7 @@ class _About extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('About'),
+        const SectionLabel('Om'),
         Text(
           text,
           style: AppTextStyles.body(size: 14, color: AppColors.ink)
@@ -313,7 +313,7 @@ class _IngredientsCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Ingredients'),
+        const SectionLabel('Ingredienser'),
         ClipRRect(
           borderRadius: BorderRadius.circular(14),
           child: DecoratedBox(
@@ -388,7 +388,7 @@ class _StepsList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Instructions'),
+        const SectionLabel('Instruktioner'),
         Column(
           children: [
             for (var i = 0; i < steps.length; i++) ...[
@@ -469,19 +469,19 @@ class _TimeSection extends StatelessWidget {
     final cards = <Widget>[];
     if ((activeTime ?? 0) > 0) {
       cards.add(Expanded(
-        child: _TimeCard(label: 'Active', value: fmtTime(activeTime, 0) ?? '—'),
+        child: _TimeCard(label: 'Aktiv', value: fmtTime(activeTime, 0) ?? '—'),
       ));
     }
     if ((passiveTime ?? 0) > 0) {
       if (cards.isNotEmpty) cards.add(const SizedBox(width: 12));
       cards.add(Expanded(
-        child: _TimeCard(label: 'Passive', value: fmtTime(0, passiveTime) ?? '—'),
+        child: _TimeCard(label: 'Passiv', value: fmtTime(0, passiveTime) ?? '—'),
       ));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Time'),
+        const SectionLabel('Tid'),
         Row(children: cards),
       ],
     );
@@ -526,7 +526,7 @@ class _TagsRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Tags'),
+        const SectionLabel('Taggar'),
         Wrap(
           spacing: 7,
           runSpacing: 7,
@@ -559,7 +559,7 @@ class _CostSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Cost'),
+        const SectionLabel('Kostnad'),
         Text(
           fmtPrice(price) ?? '',
           style: AppTextStyles.largeNumber(size: 20, color: AppColors.ink),
@@ -590,7 +590,7 @@ class _SourceBlock extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Source',
+            'Källa',
             style: AppTextStyles.body(
               size: 11,
               color: accent,
