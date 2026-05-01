@@ -5,23 +5,34 @@ import '../../providers/recipe_providers.dart';
 import '../../providers/settings_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
+import '../../widgets/edit_mode_button.dart';
+import '../../widgets/list_card_actions.dart';
 import '../../widgets/sort_filter_button.dart';
 import 'recipe_add_chooser_screen.dart';
 import 'recipe_detail_screen.dart';
 import 'widgets/recipe_card.dart';
 import 'widgets/recipe_sort_filter_sheet.dart';
 
-class RecipesListScreen extends ConsumerWidget {
+class RecipesListScreen extends ConsumerStatefulWidget {
   const RecipesListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RecipesListScreen> createState() => _RecipesListScreenState();
+}
+
+class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
+  bool _editMode = false;
+
+  @override
+  Widget build(BuildContext context) {
     final recipesAsync = ref.watch(recipesProvider);
     final sorted = ref.watch(sortedRecipesProvider);
     final filter = ref.watch(recipeFilterProvider);
     final sortKey = ref.watch(recipeSortProvider);
     final accent = ref.watch(accentColorProvider);
     final totalCount = recipesAsync.valueOrNull?.length ?? 0;
+    final canReorder =
+        sortKey == 'recent' && !filter.isActive && !_editMode;
 
     return ColoredBox(
       color: AppColors.cream,
@@ -59,6 +70,15 @@ class RecipesListScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
+                      if (totalCount > 0) ...[
+                        EditModeButton(
+                          editing: _editMode,
+                          accent: accent,
+                          onTap: () =>
+                              setState(() => _editMode = !_editMode),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
                       _AddButton(
                         accent: accent,
                         onTap: () => _openChooser(context),
@@ -97,6 +117,48 @@ class RecipesListScreen extends ConsumerWidget {
                 if (sorted.isEmpty) {
                   return _EmptyState(filtersActive: filter.isActive);
                 }
+                if (canReorder) {
+                  return ReorderableListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    itemCount: sorted.length,
+                    buildDefaultDragHandles: false,
+                    proxyDecorator: (child, _, __) => Material(
+                      elevation: 6,
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      child: child,
+                    ),
+                    onReorder: (oldIndex, newIndex) => ref
+                        .read(recipesProvider.notifier)
+                        .move(oldIndex, newIndex),
+                    itemBuilder: (context, i) {
+                      final r = sorted[i];
+                      return Padding(
+                        key: ValueKey('recipe-${r.id}'),
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: ListCardActions(
+                          itemKey: ValueKey('recipe-dismiss-${r.id}'),
+                          title: r.title.isEmpty ? 'Untitled' : r.title,
+                          kind: 'recipe',
+                          enableLongPress: false,
+                          onDelete: () => ref
+                              .read(recipesProvider.notifier)
+                              .remove(r.id),
+                          child: ReorderableDelayedDragStartListener(
+                            index: i,
+                            child: RecipeCard(
+                              recipe: r,
+                              onTap: () => _openDetail(context, r.id),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
                 return ListView.separated(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -106,9 +168,35 @@ class RecipesListScreen extends ConsumerWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, i) {
                     final r = sorted[i];
-                    return RecipeCard(
+                    final card = RecipeCard(
                       recipe: r,
                       onTap: () => _openDetail(context, r.id),
+                    );
+                    if (_editMode) {
+                      return Row(
+                        children: [
+                          Expanded(child: card),
+                          const SizedBox(width: 10),
+                          TrashButton(
+                            itemTitle: r.title.isEmpty ? 'this recipe' : r.title,
+                            onTap: () => _confirmAndDelete(
+                              context,
+                              ref,
+                              r.id,
+                              r.title,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return ListCardActions(
+                      key: ValueKey('recipe-${r.id}'),
+                      itemKey: ValueKey('recipe-dismiss-${r.id}'),
+                      title: r.title.isEmpty ? 'Untitled' : r.title,
+                      kind: 'recipe',
+                      onDelete: () =>
+                          ref.read(recipesProvider.notifier).remove(r.id),
+                      child: card,
                     );
                   },
                 );
@@ -118,6 +206,26 @@ class RecipesListScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmAndDelete(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+    String title,
+  ) async {
+    final ok = await confirmDelete(
+      context,
+      title: title.isEmpty ? 'Untitled' : title,
+      kind: 'recipe',
+    );
+    if (ok) {
+      await ref.read(recipesProvider.notifier).remove(id);
+      if (mounted &&
+          (ref.read(recipesProvider).valueOrNull ?? const []).isEmpty) {
+        setState(() => _editMode = false);
+      }
+    }
   }
 
   void _openChooser(BuildContext context) {
