@@ -146,34 +146,7 @@ void main() {
       expect(sorted.first.id, 'a');
     });
 
-    test('source filter narrows to selected sources', () async {
-      final c = await _seeded([
-        _r(id: 'a', title: 'A', source: 'manual'),
-        _r(id: 'b', title: 'B', source: 'url'),
-        _r(id: 'c', title: 'C', source: 'manual'),
-      ]);
-      addTearDown(c.dispose);
-
-      c.read(recipeFilterProvider.notifier).toggleSource('url');
-      final sorted = c.read(sortedRecipesProvider);
-      expect(sorted.map((r) => r.id), ['b']);
-    });
-
-    test('multi-select sources is OR', () async {
-      final c = await _seeded([
-        _r(id: 'a', title: 'A', source: 'manual'),
-        _r(id: 'b', title: 'B', source: 'url'),
-      ]);
-      addTearDown(c.dispose);
-
-      c.read(recipeFilterProvider.notifier)
-        ..toggleSource('manual')
-        ..toggleSource('url');
-      final sorted = c.read(sortedRecipesProvider);
-      expect(sorted.length, 2);
-    });
-
-    test('clear() resets country, tags, sources', () async {
+    test('clear() resets country and tags', () async {
       final c = await _seeded([
         _r(id: 'a', title: 'A', country: 'Italy', tags: ['quick']),
       ]);
@@ -181,9 +154,8 @@ void main() {
 
       final notifier = c.read(recipeFilterProvider.notifier)
         ..setCountry('Italy')
-        ..toggleTag('quick')
-        ..toggleSource('url');
-      expect(c.read(recipeFilterProvider).count, 3);
+        ..toggleTag('quick');
+      expect(c.read(recipeFilterProvider).count, 2);
 
       notifier.clear();
       expect(c.read(recipeFilterProvider).count, 0);

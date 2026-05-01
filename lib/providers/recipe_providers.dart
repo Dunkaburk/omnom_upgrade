@@ -30,8 +30,6 @@ const List<RecipeSortOption> kRecipeSortOptions = [
   RecipeSortOption('ing_asc', 'Fewest ingredients', 'Other'),
 ];
 
-const List<String> kRecipeSources = ['manual', 'url'];
-
 RecipeSortOption recipeSortByKey(String key) => kRecipeSortOptions.firstWhere(
       (o) => o.key == key,
       orElse: () => kRecipeSortOptions.first,
@@ -80,26 +78,21 @@ class RecipeSort extends _$RecipeSort {
 class RecipeFilterState {
   final String country; // empty = no filter
   final List<String> tags;
-  final Set<String> sources; // subset of {'manual','url'}; empty = all
   const RecipeFilterState({
     this.country = '',
     this.tags = const [],
-    this.sources = const <String>{},
   });
 
   RecipeFilterState copyWith({
     String? country,
     List<String>? tags,
-    Set<String>? sources,
   }) =>
       RecipeFilterState(
         country: country ?? this.country,
         tags: tags ?? this.tags,
-        sources: sources ?? this.sources,
       );
 
-  int get count =>
-      (country.isEmpty ? 0 : 1) + tags.length + (sources.isEmpty ? 0 : 1);
+  int get count => (country.isEmpty ? 0 : 1) + tags.length;
 
   bool get isActive => count > 0;
 
@@ -108,12 +101,6 @@ class RecipeFilterState {
       return copyWith(tags: tags.where((t) => t != tag).toList());
     }
     return copyWith(tags: [...tags, tag]);
-  }
-
-  RecipeFilterState toggleSource(String source) {
-    final next = sources.toSet();
-    if (!next.add(source)) next.remove(source);
-    return copyWith(sources: next);
   }
 }
 
@@ -124,7 +111,6 @@ class RecipeFilter extends _$RecipeFilter {
 
   void setCountry(String country) => state = state.copyWith(country: country);
   void toggleTag(String tag) => state = state.toggleTag(tag);
-  void toggleSource(String source) => state = state.toggleSource(source);
   void clear() => state = const RecipeFilterState();
 }
 
@@ -165,9 +151,6 @@ List<Recipe> sortedRecipes(SortedRecipesRef ref) {
     if (filter.country.isNotEmpty && r.country != filter.country) return false;
     if (filter.tags.isNotEmpty &&
         !filter.tags.every((t) => r.tags.contains(t))) {
-      return false;
-    }
-    if (filter.sources.isNotEmpty && !filter.sources.contains(r.source)) {
       return false;
     }
     return true;

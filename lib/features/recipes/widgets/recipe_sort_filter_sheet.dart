@@ -90,28 +90,11 @@ class _RecipeSortFilterSheet extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
                     ],
-                    const Divider(color: AppColors.border, height: 1),
-                    const SizedBox(height: 16),
-                    _Section(
-                      label: 'Source',
-                      child: Wrap(
-                        spacing: 7,
-                        runSpacing: 7,
-                        children: [
-                          for (final s in kRecipeSources)
-                            Pill(
-                              label: s == 'manual' ? 'Manual' : 'Imported',
-                              active: filter.sources.contains(s),
-                              accent: accent,
-                              onTap: () => ref
-                                  .read(recipeFilterProvider.notifier)
-                                  .toggleSource(s),
-                            ),
-                        ],
-                      ),
-                    ),
-                    if (countries.isNotEmpty) ...[
+                    if (countries.isNotEmpty || tags.isNotEmpty) ...[
+                      const Divider(color: AppColors.border, height: 1),
                       const SizedBox(height: 16),
+                    ],
+                    if (countries.isNotEmpty)
                       _Section(
                         label: 'Country',
                         child: Wrap(
@@ -138,9 +121,8 @@ class _RecipeSortFilterSheet extends ConsumerWidget {
                           ],
                         ),
                       ),
-                    ],
                     if (tags.isNotEmpty) ...[
-                      const SizedBox(height: 16),
+                      if (countries.isNotEmpty) const SizedBox(height: 16),
                       _Section(
                         label: 'Tags',
                         child: Wrap(

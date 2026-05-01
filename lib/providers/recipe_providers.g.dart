@@ -41,7 +41,7 @@ final allRecipeCountriesProvider = AutoDisposeProvider<List<String>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AllRecipeCountriesRef = AutoDisposeProviderRef<List<String>>;
-String _$sortedRecipesHash() => r'3bbfb61da0a5f2a67f1bffc5e75682df3be98a47';
+String _$sortedRecipesHash() => r'594ccfbc678622cabd4ea487c8271b481b01baef';
 
 /// See also [sortedRecipes].
 @ProviderFor(sortedRecipes)
@@ -87,7 +87,7 @@ final recipeSortProvider =
 );
 
 typedef _$RecipeSort = AutoDisposeNotifier<String>;
-String _$recipeFilterHash() => r'a380edaf3487556c1de1a36a18686022d01b2e4b';
+String _$recipeFilterHash() => r'e01262ec7a22d839e5a5391e6b6b6d1cb346b120';
 
 /// See also [RecipeFilter].
 @ProviderFor(RecipeFilter)
