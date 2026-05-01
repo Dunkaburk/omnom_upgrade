@@ -96,7 +96,7 @@ class _RecipeUrlImportScreenState
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Vi hämtar titel, ingredienser och beskrivning automatiskt.',
+                      'Titel, ingredienser och beskrivning hänmtas automatiskt.',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.body(
                         size: 13,

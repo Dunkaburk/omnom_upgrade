@@ -74,7 +74,7 @@ class RecipeAddChooserScreen extends ConsumerWidget {
                       emoji: '✍️',
                       title: 'Lägg till manuellt',
                       subtitle:
-                          'Ange titel, ingredienser och detaljer för hand',
+                          'Ange titel, ingredienser och detaljer manuellt',
                       accent: accent,
                       onTap: () {
                         Navigator.of(context).pushReplacement(
@@ -89,7 +89,7 @@ class RecipeAddChooserScreen extends ConsumerWidget {
                       emoji: '🔗',
                       title: 'Importera från URL',
                       subtitle:
-                          'Klistra in en länk så extraherar vi det automatiskt',
+                          'Klistra in en länk så extraheras det automatiskt til ett recept',
                       accent: accent,
                       onTap: () {
                         Navigator.of(context).pushReplacement(
