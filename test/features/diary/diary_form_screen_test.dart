@@ -4,21 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omnom/features/diary/diary_form_screen.dart';
 import 'package:omnom/providers/diary_providers.dart';
-import 'package:omnom/providers/repositories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../_helpers/test_firestore.dart';
 
 Future<Widget> _pump(WidgetTester tester) async {
-  // Avoid HTTP fetches for fonts during tests.
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-
-  // Pre-warm the diary provider so the repository is initialised by the time
-  // the form mounts (saves use ref.read on the notifier).
-  final container = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-  ]);
+  final fake = await seededFirestore();
+  final container = makeContainer(fake);
   await container.read(diaryEntriesProvider.future);
 
   return UncontrolledProviderScope(
@@ -28,9 +21,7 @@ Future<Widget> _pump(WidgetTester tester) async {
 }
 
 InkWell _findSaveInkWell(WidgetTester tester) {
-  // The Save button is built as: Material > InkWell > Padding > Center > Text.
-  // Walk up from the visible 'Save entry' Text to the InkWell ancestor.
-  final saveText = find.text('Save entry');
+  final saveText = find.text('Spara inlägg');
   expect(saveText, findsOneWidget);
   final inkWell = find.ancestor(
     of: saveText,
@@ -53,8 +44,7 @@ void main() {
     await tester.pumpWidget(await _pump(tester));
     await tester.pump();
 
-    // Find the title TextField — it's the first one (placeholder "What did you make?").
-    final titleField = find.widgetWithText(TextField, 'What did you make?');
+    final titleField = find.widgetWithText(TextField, 'Vad lagade du?');
     expect(titleField, findsOneWidget);
 
     await tester.enterText(titleField, 'Pasta carbonara');
@@ -62,7 +52,6 @@ void main() {
 
     expect(_findSaveInkWell(tester).onTap, isNotNull);
 
-    // Clearing the title disables the button again.
     await tester.enterText(titleField, '   ');
     await tester.pump();
     expect(_findSaveInkWell(tester).onTap, isNull);

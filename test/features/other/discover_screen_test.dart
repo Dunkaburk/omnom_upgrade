@@ -5,20 +5,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:omnom/data/countries.dart';
 import 'package:omnom/features/other/discover_screen.dart';
 import 'package:omnom/providers/discover_providers.dart';
-import 'package:omnom/providers/repositories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../_helpers/test_firestore.dart';
 
 Future<ProviderContainer> _container({Set<String>? cooked}) async {
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-  return ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-    if (cooked != null) cookedCountriesProvider.overrideWithValue(cooked),
-  ]);
+  final fake = emptyFirestore();
+  return makeContainer(
+    fake,
+    extraOverrides: [
+      if (cooked != null) cookedCountriesProvider.overrideWithValue(cooked),
+    ],
+  );
 }
 
 InkWell _randomizeInkWell(WidgetTester tester, {required bool spinning}) {
-  final label = spinning ? 'Picking…' : '🎲 Randomize a country';
+  final label = spinning ? 'Väljer…' : 'Välj ett slumpmässigt land';
   final btnText = find.text(label);
   expect(btnText, findsOneWidget);
   final inkWell = find.ancestor(of: btnText, matching: find.byType(InkWell));
@@ -48,7 +49,6 @@ void main() {
 
   testWidgets('Randomize button disables when the pool is empty',
       (tester) async {
-    // Mark every country as already cooked, then turn on Undiscovered Only.
     final allCooked = {for (final c in kCountries) c.name};
     final c = await _container(cooked: allCooked);
     addTearDown(c.dispose);
@@ -64,7 +64,7 @@ void main() {
     await tester.pump();
 
     expect(c.read(discoverPoolProvider), isEmpty);
-    expect(find.text('No countries match your filters.'), findsOneWidget);
+    expect(find.text('Inga länder matchar dina filter.'), findsOneWidget);
     expect(_randomizeInkWell(tester, spinning: false).onTap, isNull);
   });
 }

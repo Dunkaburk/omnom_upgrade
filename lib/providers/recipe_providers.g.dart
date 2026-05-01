@@ -58,7 +58,7 @@ final sortedRecipesProvider = AutoDisposeProvider<List<Recipe>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SortedRecipesRef = AutoDisposeProviderRef<List<Recipe>>;
-String _$recipesHash() => r'6705635f2aadbcf65fb38d44050a61e069992873';
+String _$recipesHash() => r'6fc45c188f8010e3123df1192525ad4da34878f0';
 
 /// See also [Recipes].
 @ProviderFor(Recipes)

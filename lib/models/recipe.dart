@@ -23,6 +23,7 @@ class Recipe with _$Recipe {
     String? photo,
     @Default('manual') String source, // "manual" | "url"
     String? sourceUrl,
+    @Default(0) int position,
   }) = _Recipe;
 
   factory Recipe.fromJson(Map<String, dynamic> json) =>

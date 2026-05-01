@@ -39,12 +39,12 @@ void main() {
 
   group('fmtPrice', () {
     test('whole number → no decimals', () {
-      expect(fmtPrice(8), '£8');
+      expect(fmtPrice(8), '8kr');
     });
 
     test('fractional → 2 decimals', () {
-      expect(fmtPrice(12.50), '£12.50');
-      expect(fmtPrice(4.5), '£4.50');
+      expect(fmtPrice(12.50), '12.50kr');
+      expect(fmtPrice(4.5), '4.50kr');
     });
 
     test('null → null', () {

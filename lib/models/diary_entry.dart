@@ -20,6 +20,7 @@ class DiaryEntry with _$DiaryEntry {
     String? photo,
     String? country,
     String? linkedRecipeId,
+    @Default(0) int position,
   }) = _DiaryEntry;
 
   factory DiaryEntry.fromJson(Map<String, dynamic> json) =>

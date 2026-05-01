@@ -6,26 +6,23 @@ part of 'repositories.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sharedPreferencesHash() => r'f408e555b3e0d2d83469490c669155da73aa7157';
+String _$firestoreHash() => r'4963ca786eb54685cef6453544040c7567e77c0f';
 
-/// Overridden in main.dart with the awaited SharedPreferences instance.
-///
-/// Copied from [sharedPreferences].
-@ProviderFor(sharedPreferences)
-final sharedPreferencesProvider = Provider<SharedPreferences>.internal(
-  sharedPreferences,
-  name: r'sharedPreferencesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$sharedPreferencesHash,
+/// See also [firestore].
+@ProviderFor(firestore)
+final firestoreProvider = Provider<FirebaseFirestore>.internal(
+  firestore,
+  name: r'firestoreProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$firestoreHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SharedPreferencesRef = ProviderRef<SharedPreferences>;
-String _$diaryRepositoryHash() => r'035caf97dbfad71955250497d2f5f7dae1d08c50';
+typedef FirestoreRef = ProviderRef<FirebaseFirestore>;
+String _$diaryRepositoryHash() => r'221f07ef2031071997792538182d70402696dc19';
 
 /// See also [diaryRepository].
 @ProviderFor(diaryRepository)
@@ -42,7 +39,7 @@ final diaryRepositoryProvider = Provider<DiaryRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DiaryRepositoryRef = ProviderRef<DiaryRepository>;
-String _$recipeRepositoryHash() => r'69fe7e8d9c558d2d9b1d99e61730a4bb9754d26a';
+String _$recipeRepositoryHash() => r'585dc92599586a5f16b60ea436571a0fef558fc1';
 
 /// See also [recipeRepository].
 @ProviderFor(recipeRepository)
@@ -60,7 +57,7 @@ final recipeRepositoryProvider = Provider<RecipeRepository>.internal(
 // ignore: unused_element
 typedef RecipeRepositoryRef = ProviderRef<RecipeRepository>;
 String _$settingsRepositoryHash() =>
-    r'aeace0e3b5a16c9917243272c8fa108d1354e378';
+    r'14a27de058e5ec0e1343a89797c843209517142f';
 
 /// See also [settingsRepository].
 @ProviderFor(settingsRepository)

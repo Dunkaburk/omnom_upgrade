@@ -42,8 +42,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // Confirm dialog appears.
-    expect(find.text('Delete this entry?'), findsOneWidget);
-    await tester.tap(find.widgetWithText(TextButton, 'Delete'));
+    expect(find.text('Ta bort entry?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Ta bort'));
     await tester.pumpAndSettle();
 
     expect(deleted, isTrue);
@@ -79,8 +79,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Delete this entry?'), findsOneWidget);
-    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    expect(find.text('Ta bort entry?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Avbryt'));
     await tester.pumpAndSettle();
 
     expect(deleted, isFalse);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/diary_entry.dart';
@@ -50,30 +52,49 @@ SortOption sortByKey(String key) =>
 
 @Riverpod(keepAlive: true)
 class DiaryEntries extends _$DiaryEntries {
+  StreamSubscription<List<DiaryEntry>>? _sub;
+
   @override
-  Future<List<DiaryEntry>> build() async =>
-      ref.read(diaryRepositoryProvider).load();
+  Future<List<DiaryEntry>> build() async {
+    final repo = ref.read(diaryRepositoryProvider);
+    ref.onDispose(() => _sub?.cancel());
+    final completer = Completer<List<DiaryEntry>>();
+    _sub = repo.watch().listen(
+      (entries) {
+        if (!completer.isCompleted) {
+          completer.complete(entries);
+        } else {
+          state = AsyncData(entries);
+        }
+      },
+      onError: (Object error, StackTrace stack) {
+        if (!completer.isCompleted) {
+          completer.completeError(error, stack);
+        } else {
+          state = AsyncError(error, stack);
+        }
+      },
+    );
+    return completer.future;
+  }
 
   Future<void> add(DiaryEntry entry) async {
-    final next = [entry, ...?state.valueOrNull];
-    state = AsyncData(next);
-    await ref.read(diaryRepositoryProvider).save(next);
+    final current = state.valueOrNull ?? const [];
+    final maxPos = current.fold<int>(
+      0,
+      (m, e) => e.position > m ? e.position : m,
+    );
+    await ref
+        .read(diaryRepositoryProvider)
+        .upsert(entry.copyWith(position: maxPos + 1000));
   }
 
   Future<void> updateEntry(DiaryEntry entry) async {
-    final current = state.valueOrNull ?? const [];
-    final next = [
-      for (final e in current) if (e.id == entry.id) entry else e,
-    ];
-    state = AsyncData(next);
-    await ref.read(diaryRepositoryProvider).save(next);
+    await ref.read(diaryRepositoryProvider).upsert(entry);
   }
 
   Future<void> remove(String id) async {
-    final current = state.valueOrNull ?? const [];
-    final next = current.where((e) => e.id != id).toList();
-    state = AsyncData(next);
-    await ref.read(diaryRepositoryProvider).save(next);
+    await ref.read(diaryRepositoryProvider).delete(id);
   }
 
   Future<void> move(int oldIndex, int newIndex) async {
@@ -82,11 +103,25 @@ class DiaryEntries extends _$DiaryEntries {
     var target = newIndex;
     if (target > oldIndex) target -= 1;
     if (target < 0) target = 0;
-    if (target > current.length) target = current.length;
-    final entry = current.removeAt(oldIndex);
-    current.insert(target, entry);
-    state = AsyncData(current);
-    await ref.read(diaryRepositoryProvider).save(current);
+    if (target >= current.length) target = current.length - 1;
+    if (target == oldIndex) return;
+
+    final moved = current.removeAt(oldIndex);
+    final upper = target > 0 ? current[target - 1].position : null;
+    final lower = target < current.length ? current[target].position : null;
+    final int newPos;
+    if (upper != null && lower != null) {
+      newPos = (upper + lower) ~/ 2;
+    } else if (upper != null) {
+      newPos = upper - 1000;
+    } else if (lower != null) {
+      newPos = lower + 1000;
+    } else {
+      newPos = 1000;
+    }
+    await ref
+        .read(diaryRepositoryProvider)
+        .upsert(moved.copyWith(position: newPos));
   }
 }
 

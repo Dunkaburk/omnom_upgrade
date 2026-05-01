@@ -1,36 +1,27 @@
-import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/diary_entry.dart';
-import 'seed_data.dart';
 
 class DiaryRepository {
-  DiaryRepository(this._prefs);
+  DiaryRepository(this._db);
 
-  static const String storageKey = 'omnom_diary_v2';
+  final FirebaseFirestore _db;
 
-  final SharedPreferences _prefs;
+  CollectionReference<Map<String, dynamic>> get _col => _db.collection('diary');
 
-  Future<List<DiaryEntry>> load() async {
-    final raw = _prefs.getString(storageKey);
-    if (raw == null) {
-      await save(seedDiaryEntries);
-      return seedDiaryEntries;
-    }
-    try {
-      final list = jsonDecode(raw) as List<dynamic>;
-      return list
-          .map((e) => DiaryEntry.fromJson(e as Map<String, dynamic>))
-          .toList(growable: false);
-    } catch (_) {
-      return seedDiaryEntries;
-    }
+  Stream<List<DiaryEntry>> watch() {
+    return _col.orderBy('position', descending: true).snapshots().map(
+          (snap) => snap.docs
+              .map((d) => DiaryEntry.fromJson(d.data()))
+              .toList(growable: false),
+        );
   }
 
-  Future<void> save(List<DiaryEntry> entries) async {
-    final encoded =
-        jsonEncode(entries.map((e) => e.toJson()).toList(growable: false));
-    await _prefs.setString(storageKey, encoded);
+  Future<void> upsert(DiaryEntry entry) async {
+    await _col.doc(entry.id).set(entry.toJson());
+  }
+
+  Future<void> delete(String id) async {
+    await _col.doc(id).delete();
   }
 }

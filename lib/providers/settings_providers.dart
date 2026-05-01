@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -9,12 +11,33 @@ part 'settings_providers.g.dart';
 
 @Riverpod(keepAlive: true)
 class SettingsController extends _$SettingsController {
+  StreamSubscription<Settings>? _sub;
+
   @override
-  Future<Settings> build() async =>
-      ref.read(settingsRepositoryProvider).load();
+  Future<Settings> build() async {
+    final repo = ref.read(settingsRepositoryProvider);
+    ref.onDispose(() => _sub?.cancel());
+    final completer = Completer<Settings>();
+    _sub = repo.watch().listen(
+      (settings) {
+        if (!completer.isCompleted) {
+          completer.complete(settings);
+        } else {
+          state = AsyncData(settings);
+        }
+      },
+      onError: (Object error, StackTrace stack) {
+        if (!completer.isCompleted) {
+          completer.completeError(error, stack);
+        } else {
+          state = AsyncError(error, stack);
+        }
+      },
+    );
+    return completer.future;
+  }
 
   Future<void> save(Settings next) async {
-    state = AsyncData(next);
     await ref.read(settingsRepositoryProvider).save(next);
   }
 }

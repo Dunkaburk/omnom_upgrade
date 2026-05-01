@@ -1,27 +1,28 @@
-import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' hide Settings;
 
 import '../models/settings.dart';
 
 class SettingsRepository {
-  SettingsRepository(this._prefs);
+  SettingsRepository(this._db);
 
-  static const String storageKey = 'omnom_settings_v1';
+  final FirebaseFirestore _db;
 
-  final SharedPreferences _prefs;
+  DocumentReference<Map<String, dynamic>> get _doc =>
+      _db.collection('settings').doc('main');
 
-  Future<Settings> load() async {
-    final raw = _prefs.getString(storageKey);
-    if (raw == null) return const Settings();
-    try {
-      return Settings.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-    } catch (_) {
-      return const Settings();
-    }
+  Stream<Settings> watch() {
+    return _doc.snapshots().map((snap) {
+      final data = snap.data();
+      if (data == null) return const Settings();
+      try {
+        return Settings.fromJson(data);
+      } catch (_) {
+        return const Settings();
+      }
+    });
   }
 
   Future<void> save(Settings settings) async {
-    await _prefs.setString(storageKey, jsonEncode(settings.toJson()));
+    await _doc.set(settings.toJson());
   }
 }

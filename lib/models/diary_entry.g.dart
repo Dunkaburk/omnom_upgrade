@@ -24,6 +24,7 @@ _$DiaryEntryImpl _$$DiaryEntryImplFromJson(Map<String, dynamic> json) =>
       photo: json['photo'] as String?,
       country: json['country'] as String?,
       linkedRecipeId: json['linkedRecipeId'] as String?,
+      position: (json['position'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$DiaryEntryImplToJson(_$DiaryEntryImpl instance) =>
@@ -42,4 +43,5 @@ Map<String, dynamic> _$$DiaryEntryImplToJson(_$DiaryEntryImpl instance) =>
       'photo': instance.photo,
       'country': instance.country,
       'linkedRecipeId': instance.linkedRecipeId,
+      'position': instance.position,
     };
