@@ -60,7 +60,7 @@ class TimeCostSection extends StatelessWidget {
               placeholder: '0.00',
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              prefix: 'kr',
+              suffix: 'kr',
             ),
           ],
         ),

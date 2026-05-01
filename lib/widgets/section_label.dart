@@ -22,7 +22,7 @@ class SectionLabel extends StatelessWidget {
             TextSpan(text: upper),
             if (optional)
               TextSpan(
-                text: ' (optional)',
+                text: ' (valfritt)',
                 style: AppTextStyles.body(
                   size: 10.5,
                   color: AppColors.muted,
