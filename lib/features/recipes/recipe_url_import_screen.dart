@@ -55,13 +55,13 @@ class _RecipeUrlImportScreenState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Import from URL',
+                            'Importera från URL',
                             style: AppTextStyles.screenTitle(size: 20)
                                 .copyWith(height: 1.1),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Paste a recipe link',
+                            'Klistra in en receptlänk',
                             style: AppTextStyles.small(size: 11),
                           ),
                         ],
@@ -90,13 +90,13 @@ class _RecipeUrlImportScreenState
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Paste a recipe URL',
+                      'Klistra in en recept-URL',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.screenTitle(size: 18),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "We'll pull in the title, ingredients and description automatically.",
+                      'Titel, ingredienser och beskrivning hänmtas automatiskt.',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.body(
                         size: 13,
@@ -127,7 +127,7 @@ class _RecipeUrlImportScreenState
                                 const EdgeInsets.symmetric(vertical: 14),
                             child: Center(
                               child: Text(
-                                'Import recipe',
+                                'Importera recept',
                                 style: AppTextStyles.body(
                                   size: 15,
                                   color: AppColors.muted,
@@ -141,7 +141,7 @@ class _RecipeUrlImportScreenState
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Coming soon — server-side scraping not yet available.',
+                      'Kommer snart — serverbaserad hämtning är inte tillgänglig ännu.',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.small(size: 11).copyWith(
                         fontStyle: FontStyle.italic,

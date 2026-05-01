@@ -34,7 +34,7 @@ class EditModeButton extends StatelessWidget {
         onTap: onTap,
         child: Semantics(
           button: true,
-          label: editing ? 'Done editing' : 'Edit list',
+          label: editing ? 'Klar med redigering' : 'Redigera lista',
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
             decoration: BoxDecoration(
@@ -43,7 +43,7 @@ class EditModeButton extends StatelessWidget {
             ),
             child: editing
                 ? Text(
-                    'Done',
+                    'Klar',
                     style: AppTextStyles.body(
                       size: 12,
                       color: fg,
@@ -78,7 +78,7 @@ class TrashButton extends StatelessWidget {
         onTap: onTap,
         child: Semantics(
           button: true,
-          label: itemTitle == null ? 'Delete' : 'Delete $itemTitle',
+          label: itemTitle == null ? 'Ta bort' : 'Ta bort $itemTitle',
           child: Container(
             width: 36,
             height: 36,

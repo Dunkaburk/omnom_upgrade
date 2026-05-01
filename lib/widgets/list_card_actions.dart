@@ -54,7 +54,7 @@ class ListCardActions extends StatelessWidget {
                 size: 20, color: AppColors.white),
             const SizedBox(width: 6),
             Text(
-              'Delete',
+              'Ta bort',
               style: AppTextStyles.body(
                 size: 14,
                 color: AppColors.white,
@@ -112,13 +112,13 @@ class ListCardActions extends StatelessWidget {
                 ),
               ),
               _SheetButton(
-                label: 'Delete $kind',
+                label: 'Ta bort $kind',
                 tone: _Tone.destructive,
                 onTap: () => Navigator.of(sheetCtx).pop('delete'),
               ),
               const SizedBox(height: 8),
               _SheetButton(
-                label: 'Cancel',
+                label: 'Avbryt',
                 tone: _Tone.neutral,
                 onTap: () => Navigator.of(sheetCtx).pop(),
               ),
@@ -147,11 +147,11 @@ Future<bool> confirmDelete(
         borderRadius: BorderRadius.circular(16),
       ),
       title: Text(
-        'Delete this $kind?',
+        'Ta bort $kind?',
         style: AppTextStyles.screenTitle(size: 18),
       ),
       content: Text(
-        '"$title" will be removed permanently.',
+        '"$title" tas bort permanent.',
         style: AppTextStyles.body(size: 13, color: AppColors.muted)
             .copyWith(height: 1.5),
       ),
@@ -159,7 +159,7 @@ Future<bool> confirmDelete(
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(false),
           child: Text(
-            'Cancel',
+            'Avbryt',
             style: AppTextStyles.body(
               size: 14,
               color: AppColors.muted,
@@ -170,7 +170,7 @@ Future<bool> confirmDelete(
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(true),
           child: Text(
-            'Delete',
+            'Ta bort',
             style: AppTextStyles.body(
               size: 14,
               color: const Color(0xFFB94A48),

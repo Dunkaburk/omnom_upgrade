@@ -358,7 +358,7 @@ class _NotesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Notes'),
+        const SectionLabel('Anteckningar'),
         Text(
           text,
           style: AppTextStyles.body(size: 14, color: AppColors.ink)
@@ -380,19 +380,19 @@ class _TimeSection extends StatelessWidget {
     final cards = <Widget>[];
     if ((activeTime ?? 0) > 0) {
       cards.add(Expanded(
-        child: _TimeCard(label: 'Active', value: fmtTime(activeTime, 0) ?? '—'),
+        child: _TimeCard(label: 'Aktiv', value: fmtTime(activeTime, 0) ?? '—'),
       ));
     }
     if ((passiveTime ?? 0) > 0) {
       if (cards.isNotEmpty) cards.add(const SizedBox(width: 12));
       cards.add(Expanded(
-        child: _TimeCard(label: 'Passive', value: fmtTime(0, passiveTime) ?? '—'),
+        child: _TimeCard(label: 'Passiv', value: fmtTime(0, passiveTime) ?? '—'),
       ));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Time'),
+        const SectionLabel('Tid'),
         Row(children: cards),
       ],
     );
@@ -439,7 +439,7 @@ class _TagsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Tags'),
+        const SectionLabel('Taggar'),
         Wrap(
           spacing: 7,
           runSpacing: 7,
@@ -471,11 +471,11 @@ class _LinkedRecipeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = linked?.title ?? 'Linked recipe';
+    final title = linked?.title ?? 'Länkat recept';
     final subtitleParts = <String>[
       if ((linked?.country ?? '').isNotEmpty) linked!.country,
       if ((linked?.ingredients.length ?? 0) > 0)
-        '${linked!.ingredients.length} ingredients',
+        '${linked!.ingredients.length} ingredienser',
     ];
     final subtitle = subtitleParts.join(' · ');
     final tappable = linked != null;
@@ -483,7 +483,7 @@ class _LinkedRecipeSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Linked recipe'),
+        const SectionLabel('Länkat recept'),
         Material(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(14),
@@ -572,7 +572,7 @@ class _RatingsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabel('Ratings'),
+        const SectionLabel('Betyg'),
         Row(children: cards),
       ],
     );
@@ -607,7 +607,7 @@ class _RatingCard extends StatelessWidget {
             '$value',
             style: AppTextStyles.largeNumber(size: 28, color: accent),
           ),
-          Text('out of 10', style: AppTextStyles.small(size: 11)),
+          Text('av 10', style: AppTextStyles.small(size: 11)),
         ],
       ),
     );

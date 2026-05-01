@@ -40,7 +40,7 @@ class DiaryHeader extends ConsumerWidget {
                 ),
                 const SizedBox(height: 1),
                 Text(
-                  '$entryCount ${entryCount == 1 ? 'entry' : 'entries'} logged',
+                  '$entryCount ${entryCount == 1 ? 'inlägg loggat' : 'inlägg loggade'}',
                   style: AppTextStyles.small(size: 12),
                 ),
               ],
@@ -100,7 +100,7 @@ class _NewButton extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'New',
+                  'Ny',
                   style: AppTextStyles.body(
                     size: 13,
                     color: AppColors.white,

@@ -19,26 +19,26 @@ class SortOption {
 }
 
 const List<SortOption> kSortOptions = [
-  SortOption('date_desc', 'Newest first', 'Date'),
-  SortOption('date_asc', 'Oldest first', 'Date'),
-  SortOption('rating_desc', 'Highest rated', 'Rating'),
-  SortOption('rating_asc', 'Lowest rated', 'Rating'),
-  SortOption('active_asc', 'Quickest (active)', 'Time'),
-  SortOption('active_desc', 'Longest (active)', 'Time'),
-  SortOption('total_asc', 'Quickest (total)', 'Time'),
-  SortOption('total_desc', 'Longest (total)', 'Time'),
-  SortOption('price_asc', 'Cheapest first', 'Price'),
-  SortOption('price_desc', 'Most expensive', 'Price'),
-  SortOption('meal', 'Meal type (A–Z)', 'Other'),
-  SortOption('title', 'Title (A–Z)', 'Other'),
+  SortOption('date_desc', 'Nyligen tillagt', 'Datum'),
+  SortOption('date_asc', 'Äldst först', 'Datum'),
+  SortOption('rating_desc', 'Högsta betyg', 'Betyg'),
+  SortOption('rating_asc', 'Lägsta betyg', 'Betyd'),
+  SortOption('active_asc', 'Snabbast (aktiv)', 'Tid'),
+  SortOption('active_desc', 'Längst (aktiv)', 'Tid'),
+  SortOption('total_asc', 'Snabbast (total)', 'Tid'),
+  SortOption('total_desc', 'Längst (total)', 'Tid'),
+  SortOption('price_asc', 'Billigaste först', 'Pris'),
+  SortOption('price_desc', 'Dyraste först', 'Pris'),
+  SortOption('meal', 'Måltidstyp (A–Ö)', 'Övrigt'),
+  SortOption('title', 'Titel (A–Ö)', 'Övrigt'),
 ];
 
 const List<String> kMealTypes = [
-  'Breakfast',
+  'Frukost',
   'Lunch',
-  'Dinner',
-  'Snack',
-  'Other',
+  'Middag',
+  'Mellanmål',
+  'Annat',
 ];
 
 SortOption sortByKey(String key) =>

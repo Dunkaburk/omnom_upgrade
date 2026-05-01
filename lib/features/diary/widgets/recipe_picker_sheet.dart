@@ -65,7 +65,7 @@ class RecipePickerSheet extends ConsumerWidget {
                   child: SizedBox(
                     width: double.infinity,
                     child: Text(
-                      'Choose a recipe',
+                      'Välj ett recept',
                       style: AppTextStyles.screenTitle(size: 18),
                     ),
                   ),
@@ -76,7 +76,7 @@ class RecipePickerSheet extends ConsumerWidget {
                     ? Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24),
                         child: Text(
-                          'No recipes saved yet.',
+                          'Inga recept sparade ännu.',
                           style: AppTextStyles.body(
                             size: 13,
                             color: AppColors.muted,
@@ -128,7 +128,7 @@ class _RecipeRow extends StatelessWidget {
     final subtitleParts = <String>[
       if (recipe.country.isNotEmpty) recipe.country,
       if (recipe.ingredients.isNotEmpty)
-        '${recipe.ingredients.length} ingredients',
+        '${recipe.ingredients.length} ingredienser',
     ];
     final subtitle = subtitleParts.join(' · ');
 

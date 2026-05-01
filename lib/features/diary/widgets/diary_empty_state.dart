@@ -19,14 +19,14 @@ class DiaryEmptyState extends StatelessWidget {
             const Text('🍽️', style: TextStyle(fontSize: 36)),
             const SizedBox(height: 12),
             Text(
-              'Nothing here yet',
+              'Inget här ännu',
               style: AppTextStyles.screenTitle(size: 16),
             ),
             const SizedBox(height: 6),
             Text(
               filtersActive
-                  ? 'Try adjusting your filters.'
-                  : 'Tap + New to log your first meal.',
+                  ? 'Prova att justera dina filter.'
+                  : 'Tryck + Ny för att logga din första måltid.',
               textAlign: TextAlign.center,
               style: AppTextStyles.body(size: 13, color: AppColors.muted)
                   .copyWith(height: 1.6),

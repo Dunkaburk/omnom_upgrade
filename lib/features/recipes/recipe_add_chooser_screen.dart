@@ -32,7 +32,7 @@ class RecipeAddChooserScreen extends ConsumerWidget {
                     const OmnomBackButton(),
                     const SizedBox(width: 12),
                     Text(
-                      'Add recipe',
+                      'Lägg till recept',
                       style: AppTextStyles.screenTitle(size: 20)
                           .copyWith(height: 1.1),
                     ),
@@ -52,14 +52,14 @@ class RecipeAddChooserScreen extends ConsumerWidget {
                       child: Column(
                         children: [
                           Text(
-                            'How would you like to add it?',
+                            'Hur vill du lägga till det?',
                             textAlign: TextAlign.center,
                             style: AppTextStyles.screenTitle(size: 17)
                                 .copyWith(height: 1.2),
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'Choose a method below',
+                            'Välj en metod nedan',
                             textAlign: TextAlign.center,
                             style: AppTextStyles.body(
                               size: 13,
@@ -72,9 +72,9 @@ class RecipeAddChooserScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     _OptionCard(
                       emoji: '✍️',
-                      title: 'Add manually',
+                      title: 'Lägg till manuellt',
                       subtitle:
-                          'Enter title, ingredients and details by hand',
+                          'Ange titel, ingredienser och detaljer manuellt',
                       accent: accent,
                       onTap: () {
                         Navigator.of(context).pushReplacement(
@@ -87,9 +87,9 @@ class RecipeAddChooserScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     _OptionCard(
                       emoji: '🔗',
-                      title: 'Import from URL',
+                      title: 'Importera från URL',
                       subtitle:
-                          "Paste a link and we'll extract it automatically",
+                          'Klistra in en länk så extraheras det automatiskt til ett recept',
                       accent: accent,
                       onTap: () {
                         Navigator.of(context).pushReplacement(

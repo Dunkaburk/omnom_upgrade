@@ -73,7 +73,7 @@ class _TagInputState extends State<TagInput> {
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 6),
                   border: InputBorder.none,
-                  hintText: widget.tags.isEmpty ? 'Add a tag' : '',
+                  hintText: widget.tags.isEmpty ? 'Lägg till en tagg' : '',
                   hintStyle: AppTextStyles.body(size: 13, color: AppColors.muted),
                 ),
                 inputFormatters: [_CommaTagFormatter(_commit)],

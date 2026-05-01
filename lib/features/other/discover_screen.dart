@@ -89,7 +89,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   ),
                   if (state.recentPicks.isNotEmpty) ...[
                     const SizedBox(height: 26),
-                    const SectionLabel('Recent picks'),
+                    const SectionLabel('Senaste val'),
                     _RecentPicksList(
                       picks: state.recentPicks,
                       cooked: cooked,
@@ -134,7 +134,7 @@ class _Header extends StatelessWidget {
                   ),
                   const SizedBox(height: 1),
                   Text(
-                    'Discover',
+                    'Utforska',
                     style: AppTextStyles.body(
                       size: 12,
                       color: AppColors.muted,
@@ -171,7 +171,7 @@ class _SettingsButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         onTap: onTap,
         child: Semantics(
-          label: 'Open settings',
+          label: 'Öppna inställningar',
           button: true,
           child: Container(
             width: 34,
@@ -287,15 +287,11 @@ class _CardHeader extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'RANDOM COUNTRY',
+                    'SLUMPMÄSSIGT LAND',
                     style: AppTextStyles.sectionLabel(),
                   ),
                   const SizedBox(height: 3),
-                  Text(
-                    'Not sure which cuisine to cook? Let fate decide.',
-                    style: AppTextStyles.body(size: 13)
-                        .copyWith(height: 1.5),
-                  ),
+                  
                 ],
               ),
             ),
@@ -331,7 +327,7 @@ class _FilterButton extends StatelessWidget {
         active ? accent.withValues(alpha: 0x44 / 0xFF) : AppColors.border;
     final fg = active ? accent : AppColors.muted;
     final label = active
-        ? '$activeCount ${activeCount > 1 ? 'filters' : 'filter'}'
+        ? '$activeCount filter'
         : 'Filter';
 
     return Material(
@@ -406,8 +402,8 @@ class _PoolInfoBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final empty = pool.isEmpty;
     final text = empty
-        ? 'No countries match — try adjusting filters.'
-        : '${pool.length} ${pool.length == 1 ? 'country' : 'countries'} in pool';
+        ? 'Inga länder matchar — prova att justera filtren.'
+        : '${pool.length} ${pool.length == 1 ? 'land' : 'länder'} i poolen';
 
     return Container(
       width: double.infinity,
@@ -464,8 +460,8 @@ class _CountryDisplay extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           empty
-              ? 'No countries match your filters.'
-              : 'Press the button to get a random country',
+              ? 'Inga länder matchar dina filter.'
+              : 'Tryck på knappen för att välja ett slumpmässigt land',
           textAlign: TextAlign.center,
           style: AppTextStyles.body(size: 13, color: AppColors.muted)
               .copyWith(height: 1.6),
@@ -482,7 +478,7 @@ class _CountryDisplay extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'COOK FROM',
+          'KÖK IFRÅN',
           style: AppTextStyles.small(
             size: 11,
             color: AppColors.muted,
@@ -514,7 +510,7 @@ class _CountryDisplay extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              'Already in your diary',
+              'Redan i din logg',
               style: AppTextStyles.body(size: 11, color: accent),
             ),
           ),
@@ -585,7 +581,7 @@ class _RandomizeButton extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Picking…',
+                      'Väljer…',
                       style: AppTextStyles.body(
                         size: 15,
                         color: fg,
@@ -595,8 +591,8 @@ class _RandomizeButton extends StatelessWidget {
                   ] else
                     Text(
                       hasPick
-                          ? '↺ Randomize again'
-                          : '🎲 Randomize a country',
+                          ? '↺ Slumpa igen'
+                          : 'Välj ett slumpmässigt land',
                       style: AppTextStyles.body(
                         size: 15,
                         color: fg,
@@ -705,7 +701,7 @@ class _RecentPickRow extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'in diary',
+                  'i loggen',
                   style: AppTextStyles.body(size: 11, color: accent),
                 ),
               ),

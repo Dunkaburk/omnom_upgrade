@@ -74,7 +74,7 @@ class _DiaryJournalScreenState extends ConsumerState<DiaryJournalScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    'Failed to load diary: $e',
+                    'Kunde inte ladda logg: $e',
                     textAlign: TextAlign.center,
                     style: AppTextStyles.body(color: AppColors.muted),
                   ),
@@ -105,7 +105,7 @@ class _DiaryJournalScreenState extends ConsumerState<DiaryJournalScreen> {
                           const SizedBox(width: 10),
                           TrashButton(
                             itemTitle: entry.title.isEmpty
-                                ? 'this entry'
+                                ? 'det här inlägget'
                                 : entry.title,
                             onTap: () => _confirmAndDelete(
                               context,
@@ -120,8 +120,8 @@ class _DiaryJournalScreenState extends ConsumerState<DiaryJournalScreen> {
                     return ListCardActions(
                       key: ValueKey('diary-${entry.id}'),
                       itemKey: ValueKey('diary-dismiss-${entry.id}'),
-                      title: entry.title.isEmpty ? 'Untitled' : entry.title,
-                      kind: 'entry',
+                      title: entry.title.isEmpty ? 'Namnlöst' : entry.title,
+                      kind: 'inlägget',
                       onDelete: () => ref
                           .read(diaryEntriesProvider.notifier)
                           .remove(entry.id),
@@ -145,8 +145,8 @@ class _DiaryJournalScreenState extends ConsumerState<DiaryJournalScreen> {
   ) async {
     final ok = await confirmDelete(
       context,
-      title: title.isEmpty ? 'Untitled' : title,
-      kind: 'entry',
+      title: title.isEmpty ? 'Namnlöst' : title,
+      kind: 'inlägget',
     );
     if (ok) {
       await ref.read(diaryEntriesProvider.notifier).remove(id);

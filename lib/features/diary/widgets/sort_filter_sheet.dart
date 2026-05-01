@@ -71,7 +71,7 @@ class _SortFilterSheet extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Sort & Filter',
+                      'Sortera & filtrera',
                       style: AppTextStyles.screenTitle(size: 18),
                     ),
                     const SizedBox(height: 20),
@@ -100,13 +100,13 @@ class _SortFilterSheet extends ConsumerWidget {
                       const Divider(color: AppColors.border, height: 1),
                       const SizedBox(height: 16),
                       _Section(
-                        label: 'Meal type',
+                        label: 'Måltidstyp',
                         child: Wrap(
                           spacing: 7,
                           runSpacing: 7,
                           children: [
                             Pill(
-                              label: 'All',
+                              label: 'Alla',
                               active: filter.meal.isEmpty,
                               accent: accent,
                               onTap: () => ref
@@ -129,7 +129,7 @@ class _SortFilterSheet extends ConsumerWidget {
                     ],
                     if (tags.isNotEmpty)
                       _Section(
-                        label: 'Tags',
+                        label: 'Taggar',
                         child: Wrap(
                           spacing: 7,
                           runSpacing: 7,
@@ -205,7 +205,7 @@ class _ClearFiltersButton extends StatelessWidget {
           ),
           alignment: Alignment.center,
           child: Text(
-            'Clear filters',
+            'Rensa filter',
             style: AppTextStyles.body(size: 14, color: AppColors.muted),
           ),
         ),

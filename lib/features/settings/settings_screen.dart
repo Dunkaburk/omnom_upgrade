@@ -133,7 +133,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: Text(
-                      'Failed to load settings: $e',
+                      'Kunde inte ladda inställningar: $e',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.body(color: AppColors.muted),
                     ),
@@ -144,9 +144,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SectionLabel('People'),
+                      const SectionLabel('Personer'),
                       Text(
-                        'Names shown beside each rating on diary entries.',
+                        'Namn som visas bredvid varje betyg på logginlägg.',
                         style: AppTextStyles.small(size: 11),
                       ),
                       const SizedBox(height: 10),
@@ -160,9 +160,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         placeholder: 'Person 2',
                       ),
                       const SizedBox(height: 22),
-                      const SectionLabel('Accent colour'),
+                      const SectionLabel('Accentfärg'),
                       Text(
-                        'Tints CTAs, ratings, the active tab, and the brand logotype.',
+                        'Färgar knappar, betyg, aktiv flik och varumärkeslogotypen.',
                         style: AppTextStyles.small(size: 11),
                       ),
                       const SizedBox(height: 12),
@@ -195,7 +195,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       if (_hex.text.isNotEmpty && !_isValidHex(_hex.text)) ...[
                         const SizedBox(height: 6),
                         Text(
-                          'Hex must be 6 characters (e.g. #C07B39).',
+                          'Hexkod måste vara 6 tecken (t.ex. #C07B39).',
                           style: AppTextStyles.small(
                             size: 11,
                             color: AppColors.muted,
@@ -236,7 +236,7 @@ class _Header extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Settings',
+                'Inställningar',
                 style: AppTextStyles.screenTitle(size: 20),
               ),
             ),
@@ -375,7 +375,7 @@ class _SaveButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 14),
             alignment: Alignment.center,
             child: Text(
-              'Save changes',
+              'Spara ändringar',
               style: AppTextStyles.body(
                 size: 15,
                 color: AppColors.white,

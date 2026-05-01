@@ -17,17 +17,17 @@ class RecipeSortOption {
 }
 
 const List<RecipeSortOption> kRecipeSortOptions = [
-  RecipeSortOption('recent', 'Recently added', 'Order'),
-  RecipeSortOption('title_asc', 'Title (A–Z)', 'Order'),
-  RecipeSortOption('title_desc', 'Title (Z–A)', 'Order'),
-  RecipeSortOption('active_asc', 'Quickest (active)', 'Time'),
-  RecipeSortOption('active_desc', 'Longest (active)', 'Time'),
-  RecipeSortOption('total_asc', 'Quickest (total)', 'Time'),
-  RecipeSortOption('total_desc', 'Longest (total)', 'Time'),
-  RecipeSortOption('price_asc', 'Cheapest first', 'Price'),
-  RecipeSortOption('price_desc', 'Most expensive', 'Price'),
-  RecipeSortOption('ing_desc', 'Most ingredients', 'Other'),
-  RecipeSortOption('ing_asc', 'Fewest ingredients', 'Other'),
+  RecipeSortOption('recent', 'Nyligen tillagt', 'Ordning'),
+  RecipeSortOption('title_asc', 'Titel (A–Ö)', 'Ordning'),
+  RecipeSortOption('title_desc', 'Titel (Ö–A)', 'Ordning'),
+  RecipeSortOption('active_asc', 'Snabbast (aktiv)', 'Tid'),
+  RecipeSortOption('active_desc', 'Längst (aktiv)', 'Tid'),
+  RecipeSortOption('total_asc', 'Snabbast (total)', 'Tid'),
+  RecipeSortOption('total_desc', 'Längst (total)', 'Tid'),
+  RecipeSortOption('price_asc', 'Billigast först', 'Pris'),
+  RecipeSortOption('price_desc', 'Dyrast först', 'Pris'),
+  RecipeSortOption('ing_desc', 'Flest ingredienser', 'Övrigt'),
+  RecipeSortOption('ing_asc', 'Färst ingredienser', 'Övrigt'),
 ];
 
 RecipeSortOption recipeSortByKey(String key) => kRecipeSortOptions.firstWhere(
