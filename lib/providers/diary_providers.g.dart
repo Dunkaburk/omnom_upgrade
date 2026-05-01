@@ -41,7 +41,7 @@ final sortedDiaryEntriesProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SortedDiaryEntriesRef = AutoDisposeProviderRef<List<DiaryEntry>>;
-String _$diaryEntriesHash() => r'69eeab660a799845e5d8b3eadc57795ca6011868';
+String _$diaryEntriesHash() => r'8c69c3f7154414db8773b33cf7e484895606d88d';
 
 /// See also [DiaryEntries].
 @ProviderFor(DiaryEntries)

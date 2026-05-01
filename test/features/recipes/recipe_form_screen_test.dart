@@ -4,18 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omnom/features/recipes/recipe_form_screen.dart';
 import 'package:omnom/providers/recipe_providers.dart';
-import 'package:omnom/providers/repositories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../_helpers/test_firestore.dart';
 
 Future<Widget> _pump(WidgetTester tester) async {
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-
-  final container = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-  ]);
+  final fake = await seededFirestore();
+  final container = makeContainer(fake);
   await container.read(recipesProvider.future);
 
   return UncontrolledProviderScope(
@@ -25,7 +21,7 @@ Future<Widget> _pump(WidgetTester tester) async {
 }
 
 InkWell _findSaveInkWell(WidgetTester tester) {
-  final saveText = find.text('Save recipe');
+  final saveText = find.text('Spara recept');
   expect(saveText, findsOneWidget);
   final inkWell = find.ancestor(
     of: saveText,
@@ -46,7 +42,7 @@ void main() {
     await tester.pumpWidget(await _pump(tester));
     await tester.pump();
 
-    final titleField = find.widgetWithText(TextField, 'Recipe name');
+    final titleField = find.widgetWithText(TextField, 'Receptnamn');
     expect(titleField, findsOneWidget);
 
     await tester.enterText(titleField, 'Pancakes');
@@ -63,20 +59,19 @@ void main() {
     await tester.pumpWidget(await _pump(tester));
     await tester.pump();
 
-    // Initial: 1 ingredient row → 3 fields (qty, unit, name).
     final initialFields = find
-        .widgetWithText(TextField, 'Ingredient')
+        .widgetWithText(TextField, 'Ingrediens')
         .evaluate()
         .length;
     expect(initialFields, 1);
 
-    final addBtn = find.widgetWithText(InkWell, '+ Add');
+    final addBtn = find.widgetWithText(InkWell, '+ Lägg till');
     expect(addBtn, findsOneWidget);
     await tester.tap(addBtn);
     await tester.pump();
 
     final afterFields = find
-        .widgetWithText(TextField, 'Ingredient')
+        .widgetWithText(TextField, 'Ingrediens')
         .evaluate()
         .length;
     expect(afterFields, 2);

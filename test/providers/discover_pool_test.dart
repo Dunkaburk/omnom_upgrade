@@ -15,36 +15,36 @@ void main() {
 
     test('continent filter narrows to selected continents', () {
       final pool = derivePool(
-        filter: const DiscoverFilterState(continents: {'Europe'}),
+        filter: const DiscoverFilterState(continents: {'Europa'}),
         cookedCountries: const {},
         recentPicks: const [],
       );
       expect(pool, isNotEmpty);
-      expect(pool.every((c) => c.continent == 'Europe'), isTrue);
-      expect(pool.any((c) => c.name == 'Italy'), isTrue);
+      expect(pool.every((c) => c.continent == 'Europa'), isTrue);
+      expect(pool.any((c) => c.name == 'Italien'), isTrue);
       expect(pool.any((c) => c.name == 'Japan'), isFalse);
     });
 
     test('multiple continents are unioned (OR), not intersected', () {
       final pool = derivePool(
         filter: const DiscoverFilterState(
-          continents: {'Europe', 'Oceania'},
+          continents: {'Europa', 'Oceanien'},
         ),
         cookedCountries: const {},
         recentPicks: const [],
       );
       final continents = pool.map((c) => c.continent).toSet();
-      expect(continents, {'Europe', 'Oceania'});
+      expect(continents, {'Europa', 'Oceanien'});
     });
 
     test('undiscoveredOnly excludes cooked countries', () {
-      final cooked = {'Italy', 'Japan'};
+      final cooked = {'Italien', 'Japan'};
       final pool = derivePool(
         filter: const DiscoverFilterState(undiscoveredOnly: true),
         cookedCountries: cooked,
         recentPicks: const [],
       );
-      expect(pool.any((c) => c.name == 'Italy'), isFalse);
+      expect(pool.any((c) => c.name == 'Italien'), isFalse);
       expect(pool.any((c) => c.name == 'Japan'), isFalse);
       expect(pool.length, kCountries.length - cooked.length);
     });
@@ -52,19 +52,19 @@ void main() {
     test('undiscoveredOnly off keeps cooked countries in pool', () {
       final pool = derivePool(
         filter: const DiscoverFilterState(),
-        cookedCountries: const {'Italy'},
+        cookedCountries: const {'Italien'},
         recentPicks: const [],
       );
-      expect(pool.any((c) => c.name == 'Italy'), isTrue);
+      expect(pool.any((c) => c.name == 'Italien'), isTrue);
     });
 
     test('excludeRecent removes session picks from pool', () {
       final pool = derivePool(
         filter: const DiscoverFilterState(excludeRecent: true),
         cookedCountries: const {},
-        recentPicks: const ['France', 'Peru'],
+        recentPicks: const ['Frankrike', 'Peru'],
       );
-      expect(pool.any((c) => c.name == 'France'), isFalse);
+      expect(pool.any((c) => c.name == 'Frankrike'), isFalse);
       expect(pool.any((c) => c.name == 'Peru'), isFalse);
       expect(pool.length, kCountries.length - 2);
     });
@@ -72,17 +72,17 @@ void main() {
     test('filters compose: continent + undiscovered + excludeRecent', () {
       final pool = derivePool(
         filter: const DiscoverFilterState(
-          continents: {'Europe'},
+          continents: {'Europa'},
           undiscoveredOnly: true,
           excludeRecent: true,
         ),
-        cookedCountries: const {'Italy', 'France'},
-        recentPicks: const ['Spain'],
+        cookedCountries: const {'Italien', 'Frankrike'},
+        recentPicks: const ['Spanien'],
       );
-      expect(pool.every((c) => c.continent == 'Europe'), isTrue);
-      expect(pool.any((c) => c.name == 'Italy'), isFalse);
-      expect(pool.any((c) => c.name == 'France'), isFalse);
-      expect(pool.any((c) => c.name == 'Spain'), isFalse);
+      expect(pool.every((c) => c.continent == 'Europa'), isTrue);
+      expect(pool.any((c) => c.name == 'Italien'), isFalse);
+      expect(pool.any((c) => c.name == 'Frankrike'), isFalse);
+      expect(pool.any((c) => c.name == 'Spanien'), isFalse);
     });
 
     test('returns empty list when filters exclude everything', () {
@@ -106,7 +106,7 @@ void main() {
       expect(only.activeCount, 1);
 
       const all = DiscoverFilterState(
-        continents: {'Asia'},
+        continents: {'Asien'},
         undiscoveredOnly: true,
         excludeRecent: true,
       );
@@ -115,7 +115,8 @@ void main() {
     });
 
     test('continents counts as one filter regardless of size', () {
-      const f = DiscoverFilterState(continents: {'Asia', 'Africa', 'Europe'});
+      const f =
+          DiscoverFilterState(continents: {'Asien', 'Afrika', 'Europa'});
       expect(f.activeCount, 1);
     });
   });

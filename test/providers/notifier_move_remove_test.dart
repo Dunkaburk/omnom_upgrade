@@ -4,15 +4,12 @@ import 'package:omnom/models/diary_entry.dart';
 import 'package:omnom/models/recipe.dart';
 import 'package:omnom/providers/diary_providers.dart';
 import 'package:omnom/providers/recipe_providers.dart';
-import 'package:omnom/providers/repositories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../_helpers/test_firestore.dart';
 
 Future<ProviderContainer> _container() async {
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-  final c = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-  ]);
+  final fake = await seededFirestore();
+  final c = makeContainer(fake);
   await c.read(diaryEntriesProvider.future);
   await c.read(recipesProvider.future);
   return c;
@@ -20,7 +17,7 @@ Future<ProviderContainer> _container() async {
 
 void main() {
   group('DiaryEntries.remove', () {
-    test('removes by id and persists', () async {
+    test('removes by id', () async {
       final c = await _container();
       addTearDown(c.dispose);
 
@@ -28,14 +25,11 @@ void main() {
       expect(start.any((e) => e.id == 's1'), isTrue);
 
       await c.read(diaryEntriesProvider.notifier).remove('s1');
+      await settleStream();
+
       final after = c.read(diaryEntriesProvider).requireValue;
       expect(after.any((e) => e.id == 's1'), isFalse);
       expect(after.length, start.length - 1);
-
-      // Reload from prefs to confirm persistence.
-      final repo = c.read(diaryRepositoryProvider);
-      final reloaded = await repo.load();
-      expect(reloaded.any((e) => e.id == 's1'), isFalse);
     });
 
     test('remove() of unknown id is a no-op', () async {
@@ -44,6 +38,8 @@ void main() {
 
       final start = c.read(diaryEntriesProvider).requireValue;
       await c.read(diaryEntriesProvider.notifier).remove('does-not-exist');
+      await settleStream();
+
       final after = c.read(diaryEntriesProvider).requireValue;
       expect(after.length, start.length);
     });
@@ -54,43 +50,41 @@ void main() {
       final c = await _container();
       addTearDown(c.dispose);
 
-      final ids =
-          c.read(diaryEntriesProvider).requireValue.map((e) => e.id).toList();
-      expect(ids.length, greaterThanOrEqualTo(3));
-
-      // Move item at 0 down to index 2.
-      await c.read(diaryEntriesProvider.notifier).move(0, 2);
-      final after =
-          c.read(diaryEntriesProvider).requireValue.map((e) => e.id).toList();
-
-      // Original element previously at index 0 should now be at index 1
-      // (ReorderableListView semantics: newIndex of 2 with item from 0
-      //  resolves to insertion at 1 after removal).
-      expect(after[1], ids[0]);
-    });
-
-    test('move persists through repository', () async {
-      final c = await _container();
-      addTearDown(c.dispose);
-
-      await c.read(diaryEntriesProvider.notifier).move(0, 3);
-      final inMem =
-          c.read(diaryEntriesProvider).requireValue.map((e) => e.id).toList();
-      final reloaded = (await c.read(diaryRepositoryProvider).load())
+      final ids = c
+          .read(diaryEntriesProvider)
+          .requireValue
           .map((e) => e.id)
           .toList();
-      expect(reloaded, inMem);
+      expect(ids.length, greaterThanOrEqualTo(3));
+
+      await c.read(diaryEntriesProvider.notifier).move(0, 2);
+      await settleStream();
+
+      final after = c
+          .read(diaryEntriesProvider)
+          .requireValue
+          .map((e) => e.id)
+          .toList();
+      expect(after[1], ids[0]);
     });
 
     test('move with out-of-range oldIndex is a no-op', () async {
       final c = await _container();
       addTearDown(c.dispose);
 
-      final before =
-          c.read(diaryEntriesProvider).requireValue.map((e) => e.id).toList();
+      final before = c
+          .read(diaryEntriesProvider)
+          .requireValue
+          .map((e) => e.id)
+          .toList();
       await c.read(diaryEntriesProvider.notifier).move(99, 0);
-      final after =
-          c.read(diaryEntriesProvider).requireValue.map((e) => e.id).toList();
+      await settleStream();
+
+      final after = c
+          .read(diaryEntriesProvider)
+          .requireValue
+          .map((e) => e.id)
+          .toList();
       expect(after, before);
     });
   });
@@ -105,6 +99,8 @@ void main() {
 
       final firstId = start.first.id;
       await c.read(recipesProvider.notifier).remove(firstId);
+      await settleStream();
+
       final after = c.read(recipesProvider).requireValue;
       expect(after.any((r) => r.id == firstId), isFalse);
     });
@@ -118,9 +114,10 @@ void main() {
       if (ids.length < 2) return;
 
       await c.read(recipesProvider.notifier).move(0, 2);
+      await settleStream();
+
       final after =
           c.read(recipesProvider).requireValue.map((r) => r.id).toList();
-      // Previous item 0 should now be at index 1 (last).
       expect(after.last, ids[0]);
     });
   });
@@ -132,6 +129,7 @@ void main() {
 
       final entry = c.read(diaryEntriesProvider).requireValue.first;
       await c.read(diaryEntriesProvider.notifier).move(0, 1);
+      await settleStream();
       final moved = c
           .read(diaryEntriesProvider)
           .requireValue
@@ -141,6 +139,7 @@ void main() {
 
       final recipe = c.read(recipesProvider).requireValue.first;
       await c.read(recipesProvider.notifier).move(0, 1);
+      await settleStream();
       final movedR = c
           .read(recipesProvider)
           .requireValue

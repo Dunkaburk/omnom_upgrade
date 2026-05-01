@@ -35,6 +35,7 @@ mixin _$DiaryEntry {
   String? get photo => throw _privateConstructorUsedError;
   String? get country => throw _privateConstructorUsedError;
   String? get linkedRecipeId => throw _privateConstructorUsedError;
+  int get position => throw _privateConstructorUsedError;
 
   /// Serializes this DiaryEntry to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -66,7 +67,8 @@ abstract class $DiaryEntryCopyWith<$Res> {
       double? price,
       String? photo,
       String? country,
-      String? linkedRecipeId});
+      String? linkedRecipeId,
+      int position});
 }
 
 /// @nodoc
@@ -98,6 +100,7 @@ class _$DiaryEntryCopyWithImpl<$Res, $Val extends DiaryEntry>
     Object? photo = freezed,
     Object? country = freezed,
     Object? linkedRecipeId = freezed,
+    Object? position = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -156,6 +159,10 @@ class _$DiaryEntryCopyWithImpl<$Res, $Val extends DiaryEntry>
           ? _value.linkedRecipeId
           : linkedRecipeId // ignore: cast_nullable_to_non_nullable
               as String?,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -182,7 +189,8 @@ abstract class _$$DiaryEntryImplCopyWith<$Res>
       double? price,
       String? photo,
       String? country,
-      String? linkedRecipeId});
+      String? linkedRecipeId,
+      int position});
 }
 
 /// @nodoc
@@ -212,6 +220,7 @@ class __$$DiaryEntryImplCopyWithImpl<$Res>
     Object? photo = freezed,
     Object? country = freezed,
     Object? linkedRecipeId = freezed,
+    Object? position = null,
   }) {
     return _then(_$DiaryEntryImpl(
       id: null == id
@@ -270,6 +279,10 @@ class __$$DiaryEntryImplCopyWithImpl<$Res>
           ? _value.linkedRecipeId
           : linkedRecipeId // ignore: cast_nullable_to_non_nullable
               as String?,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -291,7 +304,8 @@ class _$DiaryEntryImpl implements _DiaryEntry {
       this.price,
       this.photo,
       this.country,
-      this.linkedRecipeId})
+      this.linkedRecipeId,
+      this.position = 0})
       : _tags = tags;
 
   factory _$DiaryEntryImpl.fromJson(Map<String, dynamic> json) =>
@@ -336,10 +350,13 @@ class _$DiaryEntryImpl implements _DiaryEntry {
   final String? country;
   @override
   final String? linkedRecipeId;
+  @override
+  @JsonKey()
+  final int position;
 
   @override
   String toString() {
-    return 'DiaryEntry(id: $id, title: $title, desc: $desc, date: $date, meal: $meal, tags: $tags, r1: $r1, r2: $r2, activeTime: $activeTime, passiveTime: $passiveTime, price: $price, photo: $photo, country: $country, linkedRecipeId: $linkedRecipeId)';
+    return 'DiaryEntry(id: $id, title: $title, desc: $desc, date: $date, meal: $meal, tags: $tags, r1: $r1, r2: $r2, activeTime: $activeTime, passiveTime: $passiveTime, price: $price, photo: $photo, country: $country, linkedRecipeId: $linkedRecipeId, position: $position)';
   }
 
   @override
@@ -363,7 +380,9 @@ class _$DiaryEntryImpl implements _DiaryEntry {
             (identical(other.photo, photo) || other.photo == photo) &&
             (identical(other.country, country) || other.country == country) &&
             (identical(other.linkedRecipeId, linkedRecipeId) ||
-                other.linkedRecipeId == linkedRecipeId));
+                other.linkedRecipeId == linkedRecipeId) &&
+            (identical(other.position, position) ||
+                other.position == position));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -383,7 +402,8 @@ class _$DiaryEntryImpl implements _DiaryEntry {
       price,
       photo,
       country,
-      linkedRecipeId);
+      linkedRecipeId,
+      position);
 
   /// Create a copy of DiaryEntry
   /// with the given fields replaced by the non-null parameter values.
@@ -416,7 +436,8 @@ abstract class _DiaryEntry implements DiaryEntry {
       final double? price,
       final String? photo,
       final String? country,
-      final String? linkedRecipeId}) = _$DiaryEntryImpl;
+      final String? linkedRecipeId,
+      final int position}) = _$DiaryEntryImpl;
 
   factory _DiaryEntry.fromJson(Map<String, dynamic> json) =
       _$DiaryEntryImpl.fromJson;
@@ -449,6 +470,8 @@ abstract class _DiaryEntry implements DiaryEntry {
   String? get country;
   @override
   String? get linkedRecipeId;
+  @override
+  int get position;
 
   /// Create a copy of DiaryEntry
   /// with the given fields replaced by the non-null parameter values.

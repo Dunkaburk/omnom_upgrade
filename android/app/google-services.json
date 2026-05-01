@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "694441294302",
+    "project_id": "omnom-db",
+    "storage_bucket": "omnom-db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694441294302:android:3a6303d706274113b0454f",
+        "android_client_info": {
+          "package_name": "com.omnom.omnom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoyuGZ2p56Dsx4oh7iUTxKmeDa0yIRXb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

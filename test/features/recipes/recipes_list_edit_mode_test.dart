@@ -4,15 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omnom/features/recipes/recipes_list_screen.dart';
 import 'package:omnom/providers/recipe_providers.dart';
-import 'package:omnom/providers/repositories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../_helpers/test_firestore.dart';
 
 Future<ProviderContainer> _container() async {
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-  final c = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-  ]);
+  final fake = await seededFirestore();
+  final c = makeContainer(fake);
   await c.read(recipesProvider.future);
   return c;
 }
@@ -43,24 +40,20 @@ void main() {
     final before = c.read(recipesProvider).requireValue;
     expect(before, isNotEmpty);
 
-    // No trash buttons in normal mode.
-    expect(find.bySemanticsLabel(RegExp(r'^Delete .')), findsNothing);
+    expect(find.bySemanticsLabel(RegExp(r'^Ta bort .')), findsNothing);
 
-    // Tap Edit.
-    await tester.tap(find.bySemanticsLabel('Edit list'));
+    await tester.tap(find.bySemanticsLabel('Redigera lista'));
     await tester.pumpAndSettle();
 
-    // Trash buttons now show — one per recipe.
     expect(
-      find.bySemanticsLabel(RegExp(r'^Delete .')),
+      find.bySemanticsLabel(RegExp(r'^Ta bort .')),
       findsNWidgets(before.length),
     );
 
-    // Tap the first trash → confirm dialog → Delete.
-    await tester.tap(find.bySemanticsLabel(RegExp(r'^Delete .')).first);
+    await tester.tap(find.bySemanticsLabel(RegExp(r'^Ta bort .')).first);
     await tester.pumpAndSettle();
-    expect(find.text('Delete this recipe?'), findsOneWidget);
-    await tester.tap(find.widgetWithText(TextButton, 'Delete'));
+    expect(find.text('Ta bort receptet?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Ta bort'));
     await tester.pumpAndSettle();
 
     final after = c.read(recipesProvider).requireValue;
@@ -75,12 +68,12 @@ void main() {
     await _pump(tester, c);
     final before = c.read(recipesProvider).requireValue;
 
-    await tester.tap(find.bySemanticsLabel('Edit list'));
+    await tester.tap(find.bySemanticsLabel('Redigera lista'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.bySemanticsLabel(RegExp(r'^Delete .')).first);
+    await tester.tap(find.bySemanticsLabel(RegExp(r'^Ta bort .')).first);
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.tap(find.widgetWithText(TextButton, 'Avbryt'));
     await tester.pumpAndSettle();
 
     final after = c.read(recipesProvider).requireValue;

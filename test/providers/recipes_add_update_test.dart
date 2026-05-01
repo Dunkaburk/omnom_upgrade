@@ -2,36 +2,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:omnom/models/recipe.dart';
 import 'package:omnom/providers/recipe_providers.dart';
-import 'package:omnom/providers/repositories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-Future<ProviderContainer> _makeContainer(SharedPreferences prefs) async {
-  final container = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-  ]);
-  await container.read(recipesProvider.future);
-  return container;
-}
+import '../_helpers/test_firestore.dart';
 
 void main() {
   group('Recipes notifier', () {
-    test('add() prepends and persists through repository', () async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-      final c = await _makeContainer(prefs);
+    test('add() inserts and persists through Firestore', () async {
+      final fake = await seededFirestore();
+      final c = makeContainer(fake);
       addTearDown(c.dispose);
+      await c.read(recipesProvider.future);
 
       final initialCount = c.read(recipesProvider).valueOrNull?.length ?? 0;
 
       const r = Recipe(id: 'r-new', title: 'Pancakes');
       await c.read(recipesProvider.notifier).add(r);
+      await settleStream();
 
       final after = c.read(recipesProvider).valueOrNull!;
       expect(after.length, initialCount + 1);
       expect(after.first.id, 'r-new');
 
-      final c2 = await _makeContainer(prefs);
+      final c2 = makeContainer(fake);
       addTearDown(c2.dispose);
+      await c2.read(recipesProvider.future);
       expect(
         c2.read(recipesProvider).valueOrNull!.any((x) => x.id == 'r-new'),
         isTrue,
@@ -39,15 +33,16 @@ void main() {
     });
 
     test('updateEntry() mutates by id and persists', () async {
-      SharedPreferences.setMockInitialValues({});
-      final prefs = await SharedPreferences.getInstance();
-      final c = await _makeContainer(prefs);
+      final fake = await seededFirestore();
+      final c = makeContainer(fake);
       addTearDown(c.dispose);
+      await c.read(recipesProvider.future);
 
       final original = c.read(recipesProvider).valueOrNull!.first;
       await c
           .read(recipesProvider.notifier)
           .updateEntry(original.copyWith(title: 'changed-title'));
+      await settleStream();
 
       final after = c
           .read(recipesProvider)
@@ -55,8 +50,9 @@ void main() {
           .firstWhere((r) => r.id == original.id);
       expect(after.title, 'changed-title');
 
-      final c2 = await _makeContainer(prefs);
+      final c2 = makeContainer(fake);
       addTearDown(c2.dispose);
+      await c2.read(recipesProvider.future);
       final reloaded = c2
           .read(recipesProvider)
           .valueOrNull!

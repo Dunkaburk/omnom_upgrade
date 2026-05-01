@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/recipe.dart';
@@ -41,30 +43,49 @@ RecipeSortOption recipeSortByKey(String key) => kRecipeSortOptions.firstWhere(
 
 @Riverpod(keepAlive: true)
 class Recipes extends _$Recipes {
+  StreamSubscription<List<Recipe>>? _sub;
+
   @override
-  Future<List<Recipe>> build() async =>
-      ref.read(recipeRepositoryProvider).load();
+  Future<List<Recipe>> build() async {
+    final repo = ref.read(recipeRepositoryProvider);
+    ref.onDispose(() => _sub?.cancel());
+    final completer = Completer<List<Recipe>>();
+    _sub = repo.watch().listen(
+      (recipes) {
+        if (!completer.isCompleted) {
+          completer.complete(recipes);
+        } else {
+          state = AsyncData(recipes);
+        }
+      },
+      onError: (Object error, StackTrace stack) {
+        if (!completer.isCompleted) {
+          completer.completeError(error, stack);
+        } else {
+          state = AsyncError(error, stack);
+        }
+      },
+    );
+    return completer.future;
+  }
 
   Future<void> add(Recipe recipe) async {
-    final next = [recipe, ...?state.valueOrNull];
-    state = AsyncData(next);
-    await ref.read(recipeRepositoryProvider).save(next);
+    final current = state.valueOrNull ?? const [];
+    final maxPos = current.fold<int>(
+      0,
+      (m, r) => r.position > m ? r.position : m,
+    );
+    await ref
+        .read(recipeRepositoryProvider)
+        .upsert(recipe.copyWith(position: maxPos + 1000));
   }
 
   Future<void> updateEntry(Recipe recipe) async {
-    final current = state.valueOrNull ?? const [];
-    final next = [
-      for (final r in current) if (r.id == recipe.id) recipe else r,
-    ];
-    state = AsyncData(next);
-    await ref.read(recipeRepositoryProvider).save(next);
+    await ref.read(recipeRepositoryProvider).upsert(recipe);
   }
 
   Future<void> remove(String id) async {
-    final current = state.valueOrNull ?? const [];
-    final next = current.where((r) => r.id != id).toList();
-    state = AsyncData(next);
-    await ref.read(recipeRepositoryProvider).save(next);
+    await ref.read(recipeRepositoryProvider).delete(id);
   }
 
   Future<void> move(int oldIndex, int newIndex) async {
@@ -73,11 +94,25 @@ class Recipes extends _$Recipes {
     var target = newIndex;
     if (target > oldIndex) target -= 1;
     if (target < 0) target = 0;
-    if (target > current.length) target = current.length;
-    final recipe = current.removeAt(oldIndex);
-    current.insert(target, recipe);
-    state = AsyncData(current);
-    await ref.read(recipeRepositoryProvider).save(current);
+    if (target >= current.length) target = current.length - 1;
+    if (target == oldIndex) return;
+
+    final moved = current.removeAt(oldIndex);
+    final upper = target > 0 ? current[target - 1].position : null;
+    final lower = target < current.length ? current[target].position : null;
+    final int newPos;
+    if (upper != null && lower != null) {
+      newPos = (upper + lower) ~/ 2;
+    } else if (upper != null) {
+      newPos = upper - 1000;
+    } else if (lower != null) {
+      newPos = lower + 1000;
+    } else {
+      newPos = 1000;
+    }
+    await ref
+        .read(recipeRepositoryProvider)
+        .upsert(moved.copyWith(position: newPos));
   }
 }
 

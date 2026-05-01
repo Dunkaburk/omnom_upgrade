@@ -3,16 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:omnom/features/settings/settings_screen.dart';
-import 'package:omnom/providers/repositories.dart';
 import 'package:omnom/providers/settings_providers.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../_helpers/test_firestore.dart';
 
 Future<ProviderContainer> _container() async {
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-  final c = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-  ]);
+  final fake = emptyFirestore();
+  final c = makeContainer(fake);
   await c.read(settingsControllerProvider.future);
   return c;
 }
@@ -54,13 +51,12 @@ void main() {
     await tester.enterText(p2Field, 'Sam');
     await tester.pump();
 
-    // Pick the second swatch (sienna #A0522D) by tapping its semantic label.
     final swatch = find.bySemanticsLabel('Accent #A0522D');
     expect(swatch, findsOneWidget);
     await tester.tap(swatch);
     await tester.pump();
 
-    await tester.tap(find.text('Save changes'));
+    await tester.tap(find.text('Spara ändringar'));
     await tester.pumpAndSettle();
 
     final saved = c.read(settingsControllerProvider).requireValue;
@@ -69,7 +65,8 @@ void main() {
     expect(saved.accentHex, '#A0522D');
   });
 
-  testWidgets('empty name fallbacks to default Jonathan/Louise', (tester) async {
+  testWidgets('empty name fallbacks to default Jonathan/Louise',
+      (tester) async {
     final c = await _container();
     addTearDown(c.dispose);
     await _pump(tester, c);
@@ -78,7 +75,7 @@ void main() {
     await tester.enterText(find.widgetWithText(TextField, 'Person 2'), '');
     await tester.pump();
 
-    await tester.tap(find.text('Save changes'));
+    await tester.tap(find.text('Spara ändringar'));
     await tester.pumpAndSettle();
 
     final saved = c.read(settingsControllerProvider).requireValue;
@@ -97,7 +94,7 @@ void main() {
     await tester.enterText(hexField, '#3F5772');
     await tester.pump();
 
-    await tester.tap(find.text('Save changes'));
+    await tester.tap(find.text('Spara ändringar'));
     await tester.pumpAndSettle();
 
     final saved = c.read(settingsControllerProvider).requireValue;
@@ -114,9 +111,9 @@ void main() {
     await tester.enterText(hexField, '#ZZZ');
     await tester.pump();
 
-    expect(find.textContaining('Hex must be 6 characters'), findsOneWidget);
+    expect(find.textContaining('Hexkod måste vara 6 tecken'), findsOneWidget);
 
-    await tester.tap(find.text('Save changes'));
+    await tester.tap(find.text('Spara ändringar'));
     await tester.pumpAndSettle();
 
     final saved = c.read(settingsControllerProvider).requireValue;

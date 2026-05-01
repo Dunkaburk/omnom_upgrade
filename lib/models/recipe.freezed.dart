@@ -34,6 +34,7 @@ mixin _$Recipe {
   String? get photo => throw _privateConstructorUsedError;
   String get source => throw _privateConstructorUsedError; // "manual" | "url"
   String? get sourceUrl => throw _privateConstructorUsedError;
+  int get position => throw _privateConstructorUsedError;
 
   /// Serializes this Recipe to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -63,7 +64,8 @@ abstract class $RecipeCopyWith<$Res> {
       double? price,
       String? photo,
       String source,
-      String? sourceUrl});
+      String? sourceUrl,
+      int position});
 }
 
 /// @nodoc
@@ -95,6 +97,7 @@ class _$RecipeCopyWithImpl<$Res, $Val extends Recipe>
     Object? photo = freezed,
     Object? source = null,
     Object? sourceUrl = freezed,
+    Object? position = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -153,6 +156,10 @@ class _$RecipeCopyWithImpl<$Res, $Val extends Recipe>
           ? _value.sourceUrl
           : sourceUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -178,7 +185,8 @@ abstract class _$$RecipeImplCopyWith<$Res> implements $RecipeCopyWith<$Res> {
       double? price,
       String? photo,
       String source,
-      String? sourceUrl});
+      String? sourceUrl,
+      int position});
 }
 
 /// @nodoc
@@ -208,6 +216,7 @@ class __$$RecipeImplCopyWithImpl<$Res>
     Object? photo = freezed,
     Object? source = null,
     Object? sourceUrl = freezed,
+    Object? position = null,
   }) {
     return _then(_$RecipeImpl(
       id: null == id
@@ -266,6 +275,10 @@ class __$$RecipeImplCopyWithImpl<$Res>
           ? _value.sourceUrl
           : sourceUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -287,7 +300,8 @@ class _$RecipeImpl implements _Recipe {
       this.price,
       this.photo,
       this.source = 'manual',
-      this.sourceUrl})
+      this.sourceUrl,
+      this.position = 0})
       : _tags = tags,
         _ingredients = ingredients,
         _steps = steps;
@@ -349,10 +363,13 @@ class _$RecipeImpl implements _Recipe {
 // "manual" | "url"
   @override
   final String? sourceUrl;
+  @override
+  @JsonKey()
+  final int position;
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, description: $description, servings: $servings, country: $country, tags: $tags, ingredients: $ingredients, steps: $steps, activeTime: $activeTime, passiveTime: $passiveTime, price: $price, photo: $photo, source: $source, sourceUrl: $sourceUrl)';
+    return 'Recipe(id: $id, title: $title, description: $description, servings: $servings, country: $country, tags: $tags, ingredients: $ingredients, steps: $steps, activeTime: $activeTime, passiveTime: $passiveTime, price: $price, photo: $photo, source: $source, sourceUrl: $sourceUrl, position: $position)';
   }
 
   @override
@@ -379,7 +396,9 @@ class _$RecipeImpl implements _Recipe {
             (identical(other.photo, photo) || other.photo == photo) &&
             (identical(other.source, source) || other.source == source) &&
             (identical(other.sourceUrl, sourceUrl) ||
-                other.sourceUrl == sourceUrl));
+                other.sourceUrl == sourceUrl) &&
+            (identical(other.position, position) ||
+                other.position == position));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -399,7 +418,8 @@ class _$RecipeImpl implements _Recipe {
       price,
       photo,
       source,
-      sourceUrl);
+      sourceUrl,
+      position);
 
   /// Create a copy of Recipe
   /// with the given fields replaced by the non-null parameter values.
@@ -432,7 +452,8 @@ abstract class _Recipe implements Recipe {
       final double? price,
       final String? photo,
       final String source,
-      final String? sourceUrl}) = _$RecipeImpl;
+      final String? sourceUrl,
+      final int position}) = _$RecipeImpl;
 
   factory _Recipe.fromJson(Map<String, dynamic> json) = _$RecipeImpl.fromJson;
 
@@ -464,6 +485,8 @@ abstract class _Recipe implements Recipe {
   String get source; // "manual" | "url"
   @override
   String? get sourceUrl;
+  @override
+  int get position;
 
   /// Create a copy of Recipe
   /// with the given fields replaced by the non-null parameter values.

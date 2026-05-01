@@ -3,18 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:omnom/models/ingredient.dart';
 import 'package:omnom/models/recipe.dart';
 import 'package:omnom/providers/recipe_providers.dart';
-import 'package:omnom/providers/repositories.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-Future<ProviderContainer> _makeContainer() async {
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-  final container = ProviderContainer(overrides: [
-    sharedPreferencesProvider.overrideWithValue(prefs),
-  ]);
-  await container.read(recipesProvider.future);
-  return container;
-}
+import '../_helpers/test_firestore.dart';
 
 Recipe _r({
   required String id,
@@ -44,19 +34,10 @@ Recipe _r({
 }
 
 Future<ProviderContainer> _seeded(List<Recipe> recipes) async {
-  final c = await _makeContainer();
-  // Replace with our deterministic test set.
-  final notifier = c.read(recipesProvider.notifier);
-  // Remove seed recipes first.
-  final seedIds = (c.read(recipesProvider).valueOrNull ?? const [])
-      .map((r) => r.id)
-      .toList();
-  for (final id in seedIds) {
-    await notifier.remove(id);
-  }
-  for (final r in recipes.reversed) {
-    await notifier.add(r);
-  }
+  final fake = emptyFirestore();
+  await seedRecipesInto(fake, recipes);
+  final c = makeContainer(fake);
+  await c.read(recipesProvider.future);
   return c;
 }
 
@@ -183,8 +164,6 @@ void main() {
       addTearDown(c.dispose);
 
       final countries = c.read(allRecipeCountriesProvider);
-      // 'Italy' and 'Japan' (note: trimmed); '  Japan  ' as stored value, but
-      // allRecipeCountriesProvider trims before adding to the set.
       expect(countries, ['Italy', 'Japan']);
     });
   });
