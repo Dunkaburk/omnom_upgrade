@@ -143,6 +143,7 @@ class _RecipesListScreenState extends ConsumerState<RecipesListScreen> {
                           itemKey: ValueKey('recipe-dismiss-${r.id}'),
                           title: r.title.isEmpty ? 'Untitled' : r.title,
                           kind: 'recipe',
+                          enableLongPress: false,
                           onDelete: () => ref
                               .read(recipesProvider.notifier)
                               .remove(r.id),

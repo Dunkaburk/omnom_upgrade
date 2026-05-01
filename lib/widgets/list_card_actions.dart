@@ -14,7 +14,7 @@ class ListCardActions extends StatelessWidget {
     required this.kind,
     required this.onDelete,
     required this.child,
-    this.onReorderHandle,
+    this.enableLongPress = true,
   });
 
   /// Stable key for [Dismissible] — usually the item's id.
@@ -29,13 +29,14 @@ class ListCardActions extends StatelessWidget {
   final VoidCallback onDelete;
   final Widget child;
 
-  /// When non-null, a long-press also offers a reorder hint via this callback.
-  /// Currently unused by callers — placeholder for future drag-handle entry.
-  final VoidCallback? onReorderHandle;
+  /// Set to false when the parent already binds long-press to another gesture
+  /// (e.g. drag-to-reorder). Disables only the long-press action sheet —
+  /// swipe-to-delete still works.
+  final bool enableLongPress;
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
+    final dismissible = Dismissible(
       key: itemKey,
       direction: DismissDirection.endToStart,
       background: Container(
@@ -65,11 +66,14 @@ class ListCardActions extends StatelessWidget {
       ),
       confirmDismiss: (_) => confirmDelete(context, title: title, kind: kind),
       onDismissed: (_) => onDelete(),
-      child: GestureDetector(
-        onLongPress: () => _showActionSheet(context),
-        child: child,
-      ),
+      child: enableLongPress
+          ? GestureDetector(
+              onLongPress: () => _showActionSheet(context),
+              child: child,
+            )
+          : child,
     );
+    return dismissible;
   }
 
   Future<void> _showActionSheet(BuildContext context) async {
