@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/diary_providers.dart';
-import '../../../providers/settings_providers.dart';
-import '../../../theme/colors.dart';
-import '../../../theme/typography.dart';
+import '../theme/colors.dart';
+import '../theme/typography.dart';
 
-class SortFilterButton extends ConsumerWidget {
-  const SortFilterButton({super.key, required this.onTap});
+/// Generic sort/filter trigger button — used by both the Diary and Recipes
+/// list screens. Active styling kicks in when `filterCount > 0`.
+class OmnomSortFilterButton extends StatelessWidget {
+  const OmnomSortFilterButton({
+    super.key,
+    required this.sortLabel,
+    required this.filterCount,
+    required this.accent,
+    required this.onTap,
+  });
 
+  final String sortLabel;
+  final int filterCount;
+  final Color accent;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final accent = ref.watch(accentColorProvider);
-    final sortKey = ref.watch(diarySortProvider);
-    final filter = ref.watch(diaryFilterProvider);
-
-    final hasFilters = filter.isActive;
-    final activeSort = sortByKey(sortKey);
-    final filterCount = filter.count;
-
+  Widget build(BuildContext context) {
+    final hasFilters = filterCount > 0;
     final fg = hasFilters ? accent : AppColors.muted;
     final bg = hasFilters
         ? accent.withValues(alpha: 0x18 / 0xFF)
@@ -30,8 +31,8 @@ class SortFilterButton extends ConsumerWidget {
         : AppColors.border;
 
     final label = filterCount > 0
-        ? '${activeSort.label} · $filterCount filter${filterCount == 1 ? '' : 's'}'
-        : activeSort.label;
+        ? '$sortLabel · $filterCount filter${filterCount == 1 ? '' : 's'}'
+        : sortLabel;
 
     return Material(
       color: bg,
@@ -60,9 +61,8 @@ class SortFilterButton extends ConsumerWidget {
               ),
               Text(
                 '▾',
-                style: AppTextStyles.body(size: 10, color: fg).copyWith(
-                  height: 1,
-                ),
+                style: AppTextStyles.body(size: 10, color: fg)
+                    .copyWith(height: 1),
               ),
             ],
           ),

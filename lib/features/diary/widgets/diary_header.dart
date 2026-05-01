@@ -4,16 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/settings_providers.dart';
 import '../../../theme/colors.dart';
 import '../../../theme/typography.dart';
+import '../../../widgets/edit_mode_button.dart';
 
 class DiaryHeader extends ConsumerWidget {
   const DiaryHeader({
     super.key,
     required this.entryCount,
     required this.onNew,
+    this.editing = false,
+    this.onToggleEdit,
   });
 
   final int entryCount;
   final VoidCallback onNew;
+  final bool editing;
+  final VoidCallback? onToggleEdit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,6 +46,14 @@ class DiaryHeader extends ConsumerWidget {
               ],
             ),
           ),
+          if (onToggleEdit != null) ...[
+            EditModeButton(
+              editing: editing,
+              accent: accent,
+              onTap: onToggleEdit!,
+            ),
+            const SizedBox(width: 8),
+          ],
           _NewButton(accent: accent, onTap: onNew),
         ],
       ),

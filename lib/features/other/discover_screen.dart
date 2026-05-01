@@ -10,6 +10,7 @@ import '../../providers/settings_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
 import '../../widgets/section_label.dart';
+import '../settings/settings_screen.dart';
 import 'widgets/discover_filter_sheet.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
@@ -117,22 +118,75 @@ class _Header extends StatelessWidget {
         border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
-        child: Column(
+        padding: const EdgeInsets.fromLTRB(20, 16, 12, 14),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'omnom',
-              style: AppTextStyles.brandLogo(color: accent)
-                  .copyWith(letterSpacing: -0.02 * 26),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'omnom',
+                    style: AppTextStyles.brandLogo(color: accent)
+                        .copyWith(letterSpacing: -0.02 * 26),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    'Discover',
+                    style: AppTextStyles.body(
+                      size: 12,
+                      color: AppColors.muted,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 1),
-            Text(
-              'Discover',
-              style: AppTextStyles.body(size: 12, color: AppColors.muted),
+            _SettingsButton(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const SettingsScreen(),
+                ),
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingsButton extends StatelessWidget {
+  const _SettingsButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Semantics(
+          label: 'Open settings',
+          button: true,
+          child: Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.border, width: 1.5),
+            ),
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.settings_outlined,
+              size: 18,
+              color: AppColors.muted,
+            ),
+          ),
         ),
       ),
     );

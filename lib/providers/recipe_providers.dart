@@ -5,6 +5,40 @@ import 'repositories.dart';
 
 part 'recipe_providers.g.dart';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Sort options
+// ─────────────────────────────────────────────────────────────────────────────
+
+class RecipeSortOption {
+  final String key;
+  final String label;
+  final String group;
+  const RecipeSortOption(this.key, this.label, this.group);
+}
+
+const List<RecipeSortOption> kRecipeSortOptions = [
+  RecipeSortOption('recent', 'Recently added', 'Order'),
+  RecipeSortOption('title_asc', 'Title (A–Z)', 'Order'),
+  RecipeSortOption('title_desc', 'Title (Z–A)', 'Order'),
+  RecipeSortOption('active_asc', 'Quickest (active)', 'Time'),
+  RecipeSortOption('active_desc', 'Longest (active)', 'Time'),
+  RecipeSortOption('total_asc', 'Quickest (total)', 'Time'),
+  RecipeSortOption('total_desc', 'Longest (total)', 'Time'),
+  RecipeSortOption('price_asc', 'Cheapest first', 'Price'),
+  RecipeSortOption('price_desc', 'Most expensive', 'Price'),
+  RecipeSortOption('ing_desc', 'Most ingredients', 'Other'),
+  RecipeSortOption('ing_asc', 'Fewest ingredients', 'Other'),
+];
+
+RecipeSortOption recipeSortByKey(String key) => kRecipeSortOptions.firstWhere(
+      (o) => o.key == key,
+      orElse: () => kRecipeSortOptions.first,
+    );
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────────────────────────────────────
+
 @Riverpod(keepAlive: true)
 class Recipes extends _$Recipes {
   @override
@@ -45,4 +79,134 @@ class Recipes extends _$Recipes {
     state = AsyncData(current);
     await ref.read(recipeRepositoryProvider).save(current);
   }
+}
+
+@riverpod
+class RecipeSort extends _$RecipeSort {
+  @override
+  String build() => 'recent';
+  void set(String key) => state = key;
+}
+
+class RecipeFilterState {
+  final String country; // empty = no filter
+  final List<String> tags;
+  const RecipeFilterState({
+    this.country = '',
+    this.tags = const [],
+  });
+
+  RecipeFilterState copyWith({
+    String? country,
+    List<String>? tags,
+  }) =>
+      RecipeFilterState(
+        country: country ?? this.country,
+        tags: tags ?? this.tags,
+      );
+
+  int get count => (country.isEmpty ? 0 : 1) + tags.length;
+
+  bool get isActive => count > 0;
+
+  RecipeFilterState toggleTag(String tag) {
+    if (tags.contains(tag)) {
+      return copyWith(tags: tags.where((t) => t != tag).toList());
+    }
+    return copyWith(tags: [...tags, tag]);
+  }
+}
+
+@riverpod
+class RecipeFilter extends _$RecipeFilter {
+  @override
+  RecipeFilterState build() => const RecipeFilterState();
+
+  void setCountry(String country) => state = state.copyWith(country: country);
+  void toggleTag(String tag) => state = state.toggleTag(tag);
+  void clear() => state = const RecipeFilterState();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Derived
+// ─────────────────────────────────────────────────────────────────────────────
+
+@riverpod
+List<String> allRecipeTags(AllRecipeTagsRef ref) {
+  final recipes = ref.watch(recipesProvider).valueOrNull ?? const [];
+  final set = <String>{};
+  for (final r in recipes) {
+    set.addAll(r.tags);
+  }
+  final list = set.toList()..sort();
+  return list;
+}
+
+@riverpod
+List<String> allRecipeCountries(AllRecipeCountriesRef ref) {
+  final recipes = ref.watch(recipesProvider).valueOrNull ?? const [];
+  final set = <String>{};
+  for (final r in recipes) {
+    final c = r.country.trim();
+    if (c.isNotEmpty) set.add(c);
+  }
+  final list = set.toList()..sort();
+  return list;
+}
+
+@riverpod
+List<Recipe> sortedRecipes(SortedRecipesRef ref) {
+  final recipes = ref.watch(recipesProvider).valueOrNull ?? const [];
+  final sortKey = ref.watch(recipeSortProvider);
+  final filter = ref.watch(recipeFilterProvider);
+
+  final filtered = recipes.where((r) {
+    if (filter.country.isNotEmpty && r.country != filter.country) return false;
+    if (filter.tags.isNotEmpty &&
+        !filter.tags.every((t) => r.tags.contains(t))) {
+      return false;
+    }
+    return true;
+  }).toList();
+
+  int byActive(Recipe a, Recipe b) =>
+      (a.activeTime ?? -1).compareTo(b.activeTime ?? -1);
+  int byTotal(Recipe a, Recipe b) =>
+      ((a.activeTime ?? 0) + (a.passiveTime ?? 0))
+          .compareTo((b.activeTime ?? 0) + (b.passiveTime ?? 0));
+  int byPrice(Recipe a, Recipe b) =>
+      (a.price ?? -1).compareTo(b.price ?? -1);
+  int byIngredients(Recipe a, Recipe b) =>
+      a.ingredients.length.compareTo(b.ingredients.length);
+  int byTitle(Recipe a, Recipe b) =>
+      a.title.toLowerCase().compareTo(b.title.toLowerCase());
+
+  final sorted = [...filtered];
+  switch (sortKey) {
+    case 'title_asc':
+      sorted.sort(byTitle);
+    case 'title_desc':
+      sorted.sort((a, b) => byTitle(b, a));
+    case 'active_asc':
+      sorted.sort(byActive);
+    case 'active_desc':
+      sorted.sort((a, b) => byActive(b, a));
+    case 'total_asc':
+      sorted.sort(byTotal);
+    case 'total_desc':
+      sorted.sort((a, b) => byTotal(b, a));
+    case 'price_asc':
+      sorted.sort(byPrice);
+    case 'price_desc':
+      sorted.sort((a, b) => byPrice(b, a));
+    case 'ing_desc':
+      sorted.sort((a, b) => byIngredients(b, a));
+    case 'ing_asc':
+      sorted.sort(byIngredients);
+    case 'recent':
+    default:
+      // No-op: preserve insertion order (newest is at the front already).
+      break;
+  }
+  return sorted;
 }

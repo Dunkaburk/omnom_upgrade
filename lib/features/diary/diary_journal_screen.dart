@@ -2,32 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/diary_providers.dart';
+import '../../providers/settings_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/typography.dart';
+import '../../widgets/edit_mode_button.dart';
 import '../../widgets/list_card_actions.dart';
+import '../../widgets/sort_filter_button.dart';
 import 'diary_detail_screen.dart';
 import 'diary_form_screen.dart';
 import 'widgets/diary_card.dart';
 import 'widgets/diary_empty_state.dart';
 import 'widgets/diary_header.dart';
-import 'widgets/sort_filter_button.dart';
 import 'widgets/sort_filter_sheet.dart';
 
-class DiaryJournalScreen extends ConsumerWidget {
+class DiaryJournalScreen extends ConsumerStatefulWidget {
   const DiaryJournalScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DiaryJournalScreen> createState() =>
+      _DiaryJournalScreenState();
+}
+
+class _DiaryJournalScreenState extends ConsumerState<DiaryJournalScreen> {
+  bool _editMode = false;
+
+  @override
+  Widget build(BuildContext context) {
     final entriesAsync = ref.watch(diaryEntriesProvider);
     final filter = ref.watch(diaryFilterProvider);
+    final sortKey = ref.watch(diarySortProvider);
     final sorted = ref.watch(sortedDiaryEntriesProvider);
+    final accent = ref.watch(accentColorProvider);
     final totalCount = entriesAsync.valueOrNull?.length ?? 0;
 
     return ColoredBox(
       color: AppColors.cream,
       child: Column(
         children: [
-          // Sticky header (logo + count + "+ New" + sort/filter trigger)
           DecoratedBox(
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: AppColors.border)),
@@ -37,10 +48,17 @@ class DiaryJournalScreen extends ConsumerWidget {
                 DiaryHeader(
                   entryCount: totalCount,
                   onNew: () => _openNewEntry(context),
+                  editing: _editMode,
+                  onToggleEdit: totalCount == 0
+                      ? null
+                      : () => setState(() => _editMode = !_editMode),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
-                  child: SortFilterButton(
+                  child: OmnomSortFilterButton(
+                    sortLabel: sortByKey(sortKey).label,
+                    filterCount: filter.count,
+                    accent: accent,
                     onTap: () => showSortFilterSheet(context),
                   ),
                 ),
@@ -75,6 +93,30 @@ class DiaryJournalScreen extends ConsumerWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, i) {
                     final entry = sorted[i];
+                    final card = DiaryCard(
+                      entry: entry,
+                      onTap: () => _openDetail(context, entry.id),
+                    );
+                    if (_editMode) {
+                      return Row(
+                        key: ValueKey('diary-edit-${entry.id}'),
+                        children: [
+                          Expanded(child: card),
+                          const SizedBox(width: 10),
+                          TrashButton(
+                            itemTitle: entry.title.isEmpty
+                                ? 'this entry'
+                                : entry.title,
+                            onTap: () => _confirmAndDelete(
+                              context,
+                              ref,
+                              entry.id,
+                              entry.title,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
                     return ListCardActions(
                       key: ValueKey('diary-${entry.id}'),
                       itemKey: ValueKey('diary-dismiss-${entry.id}'),
@@ -83,10 +125,7 @@ class DiaryJournalScreen extends ConsumerWidget {
                       onDelete: () => ref
                           .read(diaryEntriesProvider.notifier)
                           .remove(entry.id),
-                      child: DiaryCard(
-                        entry: entry,
-                        onTap: () => _openDetail(context, entry.id),
-                      ),
+                      child: card,
                     );
                   },
                 );
@@ -96,6 +135,26 @@ class DiaryJournalScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmAndDelete(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+    String title,
+  ) async {
+    final ok = await confirmDelete(
+      context,
+      title: title.isEmpty ? 'Untitled' : title,
+      kind: 'entry',
+    );
+    if (ok) {
+      await ref.read(diaryEntriesProvider.notifier).remove(id);
+      if (mounted &&
+          (ref.read(diaryEntriesProvider).valueOrNull ?? const []).isEmpty) {
+        setState(() => _editMode = false);
+      }
+    }
   }
 
   void _openNewEntry(BuildContext context) {
